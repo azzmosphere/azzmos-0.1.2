@@ -1,0 +1,147 @@
+Files included in the library section of this project are
+expected to be used by two or more programs.  If a function
+is not used by two or more functions, or is never expected
+to be used by two or more programs then it should be placed
+in the $(top_srcdir)/src directory.
+
+URIOBJ
+======
+The URI object is the most fundemental object in this project.
+A Uniform Resource Index, will only refer the naming conventions
+that apply to that index to that web page.  Items such as content
+including URI headers should not be placed in the uriobj.c file
+or it associates,  uriparse.c and urinorm.c.  The functions within
+those files are highly dependant on RFC3986.  
+
+Before modifying the functions you must be familiar with that RFC
+and ensure the modifications do not violate any directives in it.
+
+THe URI object functions should all implement the following 
+behaviour.
+
+Accept either ref as the first argument.
+Accept base as the second argument if applicable.
+Create a new uriobj trans which is a clone of ref. (see uri_clone)
+
+Perform task.
+On any error return the error code and leave ref untouched.
+
+On success free the ref object and copy trans to ref.
+
+It is the responsibility of the calling function to print the
+error message associated with the returned error message and
+to set ref uri_flags to URI_INVALID.
+
+URI objects are allways a referenced type, and should be 
+created and freed using the following functions:
+
+uri_alloc() and uri_free( uriobj_t *uri).
+
+The following flags apply to URI objects:
+
+URI_REGNAME    - if set true the host is a regname 
+URI_IPV6       - the host is a numeric IPv6 address.
+URI_INVALID    - The uri is invlid and should not be used.
+URI_IP         - The uri host is a ip address. (must be set if URI_IPV6 
+                 is true.)
+URI_PORT       - if set true the port number is different 
+                 from the common port used in scheme.
+
+The uri structure has the following members:
+uri_id      - id number given by database.
+uri_scheme  - the uri scheme section.
+uri_auth    - the uri authority string.
+uri_path    - the uri path string.
+uri_query   - the uri query string.
+uri_frag    - the uri fragment string.
+uri_flags   - container of the flags described above.
+uri_addr    - linked list of URI IP addresses.
+uri_host    - the uri host string.
+
+URIOBJ.C
+--------
+uriobj.c provided the following functions:
+
+urobj_t *uri_alloc()
+void     uri_free( uriobj_t *uri)
+int      uri_clone(uriobj_t **ref, const urobj_t *base)
+
+URIPARSE.C
+----------
+The uriparse.c file provides the following functions:
+
+char *uri_remove_dot_segments(char **)
+int   uri_init_regex(regexpr_t **re)
+int   uri_parse( uriobj_t **uri, const regexpr_t *re, const char *fqp)
+char *pop_segment( char **path)
+char *get_next_segment(char **path)
+char *replace_prefix( char **path)
+int   uri_merge_paths(uriobj_t **rel, const uriobj_t *base)
+char *shift_segment( char **path, const int offset)
+char *uri_comp_recomp( const uriobj_t *uri)
+
+URINORM.C
+---------
+The urinorm.c file provides the following functions:
+
+int   uri_norm_scheme( uriobj_t **uri)
+int   uri_norm_auth( uriobj_t **uri)
+int   uri_norm_auth( uriobj_t **uri)
+int   uri_norm_host( uriobj_t **uri)
+int   uri_norm_port( uriobj_t **uri)
+int   norm_pct( char **pct)
+int   uri_norm_ipv4( char **ip)
+int   uri_norm_ipv6( char **ip)
+int   uri_auth_sync( uriobj_t **uri)
+int   uri_normalize( uriobj_t **uri)
+int   uri_norm_ip( uriobj_t **uri)
+
+URIRESOLVE.C
+------------
+uriobj_t *ref_resolve( uriobj_t **ref, const uriobj_t *base, const char *href, const regexpr_t *re, const bool strict)
+int       uri_resolve( uriobj_t **uri)
+
+=================================
+urobj_t *uri_alloc()
+Allocate and initilize a new URI object.
+
+void uri_free( uriobj_t *uri)
+Free a uri object.
+
+int uri_clone(uriobj_t *ref, urobj_t *base)
+Clone the contents of ref to base
+char *uri_remove_dot_segments(char **)
+--------------------------------------
+Remove the dotted section in a path.
+
+int uri_init_regex(regexpr_t *re)
+----------------------------------
+Initilize the regular expresion used for parsing uri objects.
+
+int uri_parse( uriobj_t **uri, regexpr_t *re, const char *fqp)
+break the URI into its scheme, auth, path, query and frag 
+sections.
+
+char *pop_segment( char **path)
+-------------------------------
+return the first section of the parth string and remove it from the
+path.
+
+char *get_next_segment(char **path)
+-----------------------------------
+return the last section of the path but leave the path unmodified.
+
+replace_prefix( char **path)
+----------------------------
+replace the path prefix with '/'
+
+int uri_merge_paths(uriobj_t **rel, const uriobj_t *base)
+---------------------------------------------------------
+merge the paths of base and relitive URI's
+
+int uri_trans_ref( uriobj_t **ref, const uriobj_t *base,  bool strict)
+----------------------------------------------------------------------
+Fill in any missing parts of the reference URI with ones in the base 
+uri.
+
+
