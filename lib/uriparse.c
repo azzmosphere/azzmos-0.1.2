@@ -334,7 +334,7 @@ uri_parse( uriobj_t **uri, regexpr_t *re, const char *fqp)
                 trans->uri_id = trans->uri_flags = 0;
                 trans->uri_host = trans->uri_port
 								= NULL;
-				trans->uri_ipv4 = trans->uri_ipv6 = NULL;
+				trans->uri_ip   = NULL;
         }
         return err;
 }
@@ -377,7 +377,10 @@ uri_merge_paths(  const uriobj_t *rel, const uriobj_t *base)
         }
         else {
                 pop_segment(&bpath);
-                len = strlen(rpath) + strlen(bpath) + 1;
+				if( !bpath) {
+						bpath = strdup("");
+				}
+				len = strlen(rpath) + strlen(bpath) + 1;
                 path = (char *) malloc(len * sizeof(char));
                 strncat(path, bpath, (len -1));
                 strncat(path, strdup("/"), (len - strlen(path)));
@@ -492,8 +495,8 @@ uri_parse_auth(uriobj_t **uri)
 		len = 0;
 	bool  ipv6 = false;
 	char *auth,
-	     *port,
-		 *host,
+	     *port = NULL,
+		 *host = NULL,
 		 *buffer;
 	uriobj_t *trans = uri_alloc();
 	uri_clone(&trans, *uri);

@@ -41,7 +41,7 @@
 						  uri->uri_host  =
 						  uri->uri_port  =
 						  NULL;
-		uri->uri_ipv4 = uri->uri_ipv6 =  NULL;
+		uri->uri_ip  =  NULL;
 	}
 	return uri;
  }
@@ -73,14 +73,8 @@ uri_free( uriobj_t *uri)
 		free(uri->uri_port);
 		
 		/* After a clone we do not want to free address info */
-		if( uri->uri_ipv4){
-			addr = uri->uri_ipv4;
-			freeaddrinfo(addr);
-		}
-		if( uri->uri_ipv6){
-			addr = uri->uri_ipv6;
-			freeaddrinfo(addr);
-		}
+		addr = uri->uri_ip;
+		freeaddrinfo(addr);
 		free(uri);
 	}
 }

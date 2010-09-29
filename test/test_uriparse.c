@@ -246,6 +246,36 @@ test_uri_trans_ref7(CuTest *tc)
 }
 
 void
+test_uri_trans_ref8(CuTest *tc)
+{
+	char *href  = strdup("http://www.example.com/"),
+	     *href2 = strdup("path/to/uri.html");
+	uriobj_t *uri = uri_alloc(),
+	         *ref = uri_alloc(),
+			 *trans;
+	uri_parse(&uri,re,href);
+	uri_parse_auth(&uri);	
+	uri_parse(&ref,re,href2);
+	trans = uri_trans_ref(ref,uri,false); 
+	CuAssertPtrNotNull(tc, trans);
+}
+
+void
+test_uri_trans_ref9(CuTest *tc)
+{
+	char *href  = strdup("http://www.example.com/"),
+	     *href2 = strdup("path/to/uri.html");
+	uriobj_t *uri = uri_alloc(),
+	         *ref = uri_alloc(),
+			 *trans;
+	uri_parse(&uri,re,href);
+	uri_parse_auth(&uri);	
+	uri_parse(&ref,re,href2);
+	trans = uri_trans_ref(ref,uri,false);
+	CuAssertStrEquals(tc,trans->uri_path, "/path/to/uri.html");
+}
+
+void
 test_uri_parse_auth1(CuTest *tc)
 {
 	char *href = strdup("http://www.example.com/this/is/a/buf/old/path#fragment");
@@ -321,6 +351,8 @@ GetSuite()
 	SUITE_ADD_TEST( suite, test_uri_trans_ref5);
 	SUITE_ADD_TEST( suite, test_uri_trans_ref6);
 	SUITE_ADD_TEST( suite, test_uri_trans_ref7);
+	SUITE_ADD_TEST( suite, test_uri_trans_ref8);
+	SUITE_ADD_TEST( suite, test_uri_trans_ref9);
 	SUITE_ADD_TEST( suite, test_uri_parse_auth1);
 	SUITE_ADD_TEST( suite, test_uri_parse_auth2);
 	SUITE_ADD_TEST( suite, test_uri_parse_auth3);

@@ -29,15 +29,15 @@
 /* #####   EXPORTED MACROS   ######################################################## */
 
 /* #####   EXPORTED TYPE DEFINITIONS   ############################################## */
-#define URI_REGNAME    0x01
-#define URI_IPV6       0x02
-#define URI_INVALID    0x04
-#define URI_IP         0x08
-#define URI_PORT       0x10
+#define URI_REGNAME    0x0001
+#define URI_IPV6       0x0002
+#define URI_INVALID    0x0004
+#define URI_IP         0x0008
+#define URI_PORT       0x0010
 
 /* #####   EXPORTED DATA TYPES   #################################################### */
 struct uriobj_s {
-	long   uri_id;              /* unique identifier for URI */
+	long   uri_id;             /* unique identifier for URI */
 	char *uri_scheme;          /* The scheme section */
 	char *uri_auth;            /* authority section */
 	char *uri_path;            /* path section  */
@@ -45,9 +45,8 @@ struct uriobj_s {
 	char *uri_frag;            /* fragment section */
 	char *uri_host;            /* hostname of URI */
 	char *uri_port;            /* uri port number */
-	long   uri_flags;           /* various flags for the uri */
-	struct addrinfo *uri_ipv4; /* list of the URI resolved addresses */
-	struct addrinfo *uri_ipv6; /* list of the URI resolved addresses */
+	long   uri_flags;          /* various flags for the uri */
+	struct addrinfo *uri_ip;   /* list of the URI resolved addresses */
 } typedef uriobj_t;
 
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */

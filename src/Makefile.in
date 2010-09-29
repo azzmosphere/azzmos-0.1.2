@@ -187,7 +187,7 @@ AM_LDFLAGS = @LIBCURL@ \
 	       -L$(top_builddir)/lib -lazzmos
 
 AM_CFLAGS = @POSTGRESQL_CFLAGS@ \
-	    -I$(top_srcdir)/include
+            -I$(top_srcdir)/include
 
 azzmos_SOURCES = uriresolve.h uriresolve.c\
 		 azzmos.c azzmos.h

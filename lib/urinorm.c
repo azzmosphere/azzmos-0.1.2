@@ -540,3 +540,18 @@ uri_norm_ipv4( char **ipin)
         }
         return err;
 }
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  uri_norm_ipv6
+ *  Description:  Currently this function returns ENOSYS,  as of yet IPv6 support is not
+ *                implemented in the downloader.  This should cause the URI_INVALID to 
+ *                be set.
+ * =====================================================================================
+ */
+ /* REMAINS TO BE IMPLEMENTED */
+extern int
+uri_norm_ipv6( char **ip)
+{
+        return ENOSYS;
+}

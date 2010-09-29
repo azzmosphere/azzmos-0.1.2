@@ -4,12 +4,16 @@ AM_CFLAGS = -I$(top_srcdir)/src
 AM_LDFLAGS = @POSTGRESQL_LDFLAGS@ \
              @LIBCURL@  \
              -L$(top_builddir)/lib -lazzmos
-test_uriobj_SOURCES = test_uriobj.c $(SOURCES)
-test_uriparse_SOURCES = test_uriparse.c $(SOURCES)
-test_urinorm_SOURCES  = test_urinorm.c $(SOURCES)
+test_uriobj_SOURCES     = test_uriobj.c $(SOURCES)
+test_uriparse_SOURCES   = test_uriparse.c $(SOURCES)
+test_urinorm_SOURCES    = test_urinorm.c $(SOURCES)
+test_uriresolve_SOURCES = test_uriresolve.c $(SOURCES) \
+			  $(top_srcdir)/src/uriresolve.c
 check_PROGRAMS = test_uriobj \
 		 test_uriparse \
-		 test_urinorm
+		 test_urinorm \
+		 test_uriresolve
 TESTS = test_uriobj \
 	test_uriparse \
-	test_urinorm
+	test_urinorm \
+	test_uriresolve

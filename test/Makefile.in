@@ -32,9 +32,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 check_PROGRAMS = test_uriobj$(EXEEXT) test_uriparse$(EXEEXT) \
-	test_urinorm$(EXEEXT)
+	test_urinorm$(EXEEXT) test_uriresolve$(EXEEXT)
 TESTS = test_uriobj$(EXEEXT) test_uriparse$(EXEEXT) \
-	test_urinorm$(EXEEXT)
+	test_urinorm$(EXEEXT) test_uriresolve$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -57,6 +57,10 @@ test_uriobj_LDADD = $(LDADD)
 am_test_uriparse_OBJECTS = test_uriparse.$(OBJEXT) $(am__objects_1)
 test_uriparse_OBJECTS = $(am_test_uriparse_OBJECTS)
 test_uriparse_LDADD = $(LDADD)
+am_test_uriresolve_OBJECTS = test_uriresolve.$(OBJEXT) \
+	$(am__objects_1) uriresolve.$(OBJEXT)
+test_uriresolve_OBJECTS = $(am_test_uriresolve_OBJECTS)
+test_uriresolve_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -70,7 +74,7 @@ LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
 DIST_SOURCES = $(test_urinorm_SOURCES) $(test_uriobj_SOURCES) \
-	$(test_uriparse_SOURCES)
+	$(test_uriparse_SOURCES) $(test_uriresolve_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -198,6 +202,9 @@ AM_LDFLAGS = @POSTGRESQL_LDFLAGS@ \
 test_uriobj_SOURCES = test_uriobj.c $(SOURCES)
 test_uriparse_SOURCES = test_uriparse.c $(SOURCES)
 test_urinorm_SOURCES = test_urinorm.c $(SOURCES)
+test_uriresolve_SOURCES = test_uriresolve.c $(SOURCES) \
+			  $(top_srcdir)/src/uriresolve.c
+
 all: all-am
 
 .SUFFIXES:
@@ -247,6 +254,9 @@ test_uriobj$(EXEEXT): $(test_uriobj_OBJECTS) $(test_uriobj_DEPENDENCIES)
 test_uriparse$(EXEEXT): $(test_uriparse_OBJECTS) $(test_uriparse_DEPENDENCIES) 
 	@rm -f test_uriparse$(EXEEXT)
 	$(LINK) $(test_uriparse_OBJECTS) $(test_uriparse_LDADD) $(LIBS)
+test_uriresolve$(EXEEXT): $(test_uriresolve_OBJECTS) $(test_uriresolve_DEPENDENCIES) 
+	@rm -f test_uriresolve$(EXEEXT)
+	$(LINK) $(test_uriresolve_OBJECTS) $(test_uriresolve_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -258,6 +268,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_urinorm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_uriobj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_uriparse.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_uriresolve.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uriresolve.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -279,6 +291,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
+
+uriresolve.o: $(top_srcdir)/src/uriresolve.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uriresolve.o -MD -MP -MF $(DEPDIR)/uriresolve.Tpo -c -o uriresolve.o `test -f '$(top_srcdir)/src/uriresolve.c' || echo '$(srcdir)/'`$(top_srcdir)/src/uriresolve.c
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/uriresolve.Tpo $(DEPDIR)/uriresolve.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/src/uriresolve.c' object='uriresolve.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uriresolve.o `test -f '$(top_srcdir)/src/uriresolve.c' || echo '$(srcdir)/'`$(top_srcdir)/src/uriresolve.c
+
+uriresolve.obj: $(top_srcdir)/src/uriresolve.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT uriresolve.obj -MD -MP -MF $(DEPDIR)/uriresolve.Tpo -c -o uriresolve.obj `if test -f '$(top_srcdir)/src/uriresolve.c'; then $(CYGPATH_W) '$(top_srcdir)/src/uriresolve.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/src/uriresolve.c'; fi`
+@am__fastdepCC_TRUE@	mv -f $(DEPDIR)/uriresolve.Tpo $(DEPDIR)/uriresolve.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/src/uriresolve.c' object='uriresolve.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o uriresolve.obj `if test -f '$(top_srcdir)/src/uriresolve.c'; then $(CYGPATH_W) '$(top_srcdir)/src/uriresolve.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/src/uriresolve.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
