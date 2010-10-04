@@ -136,6 +136,7 @@ uri_remove_dot_segments( const char *path )
                                 segment = shift_segment(&in_buffer, 1);
                         }
                         strcat(ou_buffer, segment);
+						free(segment);
                 }
         }
         len = strlen(ou_buffer) + 1;
@@ -207,10 +208,11 @@ shift_segment( char **path, const int offset)
                         break;
                 }
                 segment[i] = pref[i];
+				segment[(i + 1)] = '\0';
         }
-        *(path) = usplice( pref, (i + offset), (unsigned int) NULL);
-        segment[++i] = '\0';
-        realloc( (void *) segment, i);
+		i = i + offset;
+        *(path) = usplice( pref, i, (unsigned int) NULL);
+        realloc( (void *) segment, (strlen(segment) + 1));
         return segment;
 }
 
@@ -380,8 +382,9 @@ uri_merge_paths(  const uriobj_t *rel, const uriobj_t *base)
 				if( !bpath) {
 						bpath = strdup("");
 				}
-				len = strlen(rpath) + strlen(bpath) + 1;
+				len = strlen(rpath) + strlen(bpath) + 2;
                 path = (char *) malloc(len * sizeof(char));
+				path[0] = '\0';
                 strncat(path, bpath, (len -1));
                 strncat(path, strdup("/"), (len - strlen(path)));
                 strncat(path, rpath, (len - strlen(path)));
@@ -429,7 +432,7 @@ extern uriobj_t *
 uri_trans_ref(const uriobj_t *refin, const uriobj_t *base, const bool strict)
 {
         uriobj_t *trans = uri_alloc(),
-		         *ref   = uri_alloc();
+		         *ref = NULL;
 		int e = uri_clone(&ref, refin);
         if( e ) {
                 return NULL;
@@ -453,19 +456,19 @@ uri_trans_ref(const uriobj_t *refin, const uriobj_t *base, const bool strict)
                         if( ! ref->uri_path ){
                                 trans->uri_path   = URI_CP_PT(base->uri_path);
                                 if( ref->uri_query){
-                                        trans->uri_query = URI_CP_PT(ref->uri_query);
+									trans->uri_query = URI_CP_PT(ref->uri_query);
                                 }
                                 else {
-                                        trans->uri_query = URI_CP_PT(base->uri_query);
+									trans->uri_query = URI_CP_PT(base->uri_query);
                                 }
                         }
                         else {
                                 if( ref->uri_path[0] == '/'){
-                                        trans->uri_path = uri_remove_dot_segments(ref->uri_path);
+									trans->uri_path = uri_remove_dot_segments(ref->uri_path);
                                 }
                                 else{
-                                        trans->uri_path = uri_merge_paths(ref, base);
-                                        uri_strcpy(&trans->uri_path, uri_remove_dot_segments(trans->uri_path));
+									trans->uri_path = uri_merge_paths(ref, base);
+									trans->uri_path = strcpy(trans->uri_path,uri_remove_dot_segments(trans->uri_path));
                                 }
                                 trans->uri_query = URI_CP_PT(ref->uri_query);
                         }
@@ -498,7 +501,7 @@ uri_parse_auth(uriobj_t **uri)
 	     *port = NULL,
 		 *host = NULL,
 		 *buffer;
-	uriobj_t *trans = uri_alloc();
+	uriobj_t *trans;
 	uri_clone(&trans, *uri);
 	auth = URI_CP_PT(trans->uri_auth);
 	if(!auth){

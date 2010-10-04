@@ -33,6 +33,7 @@
  {
 	uriobj_t *uri = (uriobj_t *) malloc(sizeof(uriobj_t));
 	if( uri ) {
+		bzero(uri, sizeof(uriobj_t));
 		uri->uri_id = uri->uri_flags = 0;
 		uri->uri_scheme = uri->uri_auth  =
 		                  uri->uri_path  =
@@ -73,8 +74,10 @@ uri_free( uriobj_t *uri)
 		free(uri->uri_port);
 		
 		/* After a clone we do not want to free address info */
-		addr = uri->uri_ip;
-		freeaddrinfo(addr);
+		if(uri->uri_ip){
+			addr = uri->uri_ip;
+			freeaddrinfo(addr);
+		}
 		free(uri);
 	}
 }
@@ -89,19 +92,19 @@ uri_free( uriobj_t *uri)
  extern int       
  uri_clone(uriobj_t **uri, const uriobj_t *base)
  {
-	uriobj_t *trans = uri_alloc();
+	uriobj_t *u = uri_alloc();
 	if( errno ) {
 		return errno;
 	}
-	trans->uri_flags = base->uri_flags;
-	trans->uri_id    = base->uri_id;
-	trans->uri_scheme= URI_CP_PT(base->uri_scheme);
-	trans->uri_auth  = URI_CP_PT(base->uri_auth);
-	trans->uri_path  = URI_CP_PT(base->uri_path);
-	trans->uri_frag  = URI_CP_PT(base->uri_frag);
-	trans->uri_host  = URI_CP_PT(base->uri_host);
-	trans->uri_port  = URI_CP_PT(base->uri_port);
-	trans->uri_query = URI_CP_PT(base->uri_query);
-	*uri = trans;
+	u->uri_flags = base->uri_flags;
+	u->uri_id    = base->uri_id;
+	u->uri_scheme= URI_CP_PT(base->uri_scheme);
+	u->uri_auth  = URI_CP_PT(base->uri_auth);
+	u->uri_path  = URI_CP_PT(base->uri_path);
+	u->uri_frag  = URI_CP_PT(base->uri_frag);
+	u->uri_host  = URI_CP_PT(base->uri_host);
+	u->uri_port  = URI_CP_PT(base->uri_port);
+	u->uri_query = URI_CP_PT(base->uri_query);
+	*uri = u;
 	return errno;
  }

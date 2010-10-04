@@ -25,8 +25,7 @@ static void
 return_err(const char *key, const char *val, const char *msg, int err)
 {
 	DEBUG_STR(key, val);
-	ERROR_B(msg, err);
-	return NULL;
+	ERROR_E(msg, err);
 }
 
 /* #####   FUNCTION DEFINITIONS  -  EXPORTED FUNCTIONS   ############################ */

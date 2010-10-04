@@ -109,6 +109,20 @@ test_uri_merge_paths2(CuTest *tc)
         CuAssertStrEquals(tc, uri_merge_paths(rel,base),expect);
 }
 
+void
+test_uri_merge_paths3(CuTest *tc)
+{
+        char *bpath = strdup("http://www.example.com"),
+             *rpath = strdup("path/to/uri"),
+             *expect = strdup("/path/to/uri");
+        uriobj_t *base = uri_alloc(),
+                 *rel  = uri_alloc();
+        uri_parse(&base, re, bpath);
+        uri_parse(&rel, re, rpath);
+        CuAssertStrEquals(tc, uri_merge_paths(rel,base),expect);
+}
+
+
 test_uri_comp_recomp_1(CuTest *tc)
 {
         char *expect = strdup("http://www.example.com/test/func.cgi?x=y&z=j");
@@ -276,6 +290,21 @@ test_uri_trans_ref9(CuTest *tc)
 }
 
 void
+test_uri_trans_ref10(CuTest *tc)
+{
+	char *href  = strdup("http://www.example.com/some/dir/to/path"),
+	     *href2 = strdup("path/to/uri.htm");
+	uriobj_t *uri = uri_alloc(),
+	         *ref = uri_alloc(),
+			 *trans;
+	uri_parse(&uri,re,href);
+	uri_parse_auth(&uri);	
+	uri_parse(&ref,re,href2);
+	trans = uri_trans_ref(ref,uri,false);
+	CuAssertStrEquals(tc,trans->uri_path, "/some/dir/to/path/to/uri.htm");
+}
+
+void
 test_uri_parse_auth1(CuTest *tc)
 {
 	char *href = strdup("http://www.example.com/this/is/a/buf/old/path#fragment");
@@ -353,6 +382,7 @@ GetSuite()
 	SUITE_ADD_TEST( suite, test_uri_trans_ref7);
 	SUITE_ADD_TEST( suite, test_uri_trans_ref8);
 	SUITE_ADD_TEST( suite, test_uri_trans_ref9);
+	SUITE_ADD_TEST( suite, test_uri_trans_ref10);
 	SUITE_ADD_TEST( suite, test_uri_parse_auth1);
 	SUITE_ADD_TEST( suite, test_uri_parse_auth2);
 	SUITE_ADD_TEST( suite, test_uri_parse_auth3);
