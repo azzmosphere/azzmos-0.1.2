@@ -31,9 +31,8 @@
  extern uriobj_t *
  uri_alloc()
  {
-	uriobj_t *uri = (uriobj_t *) malloc(sizeof(uriobj_t));
+	uriobj_t *uri = (uriobj_t *) calloc(sizeof(uriobj_t),2);
 	if( uri ) {
-		bzero(uri, sizeof(uriobj_t));
 		uri->uri_id = uri->uri_flags = 0;
 		uri->uri_scheme = uri->uri_auth  =
 		                  uri->uri_path  =
@@ -58,20 +57,13 @@ uri_free( uriobj_t *uri)
 {
 	struct addrinfo *addr;
 	if( uri ) {
-		uri->uri_scheme = uri->uri_auth  =
-		                  uri->uri_path  =
-						  uri->uri_query =
-						  uri->uri_frag  =
-						  uri->uri_host  =
-						  uri->uri_port  =
-						  NULL;
-		free(uri->uri_scheme);
-		free(uri->uri_auth);
-		free(uri->uri_path);
-		free(uri->uri_query);
-		free(uri->uri_frag);
-		free(uri->uri_host);
-		free(uri->uri_port);
+		safe_free(uri->uri_scheme);
+		safe_free(uri->uri_auth);
+		safe_free(uri->uri_path);
+		safe_free(uri->uri_query);
+		safe_free(uri->uri_frag);
+		safe_free(uri->uri_host);
+		safe_free(uri->uri_port);
 		
 		/* After a clone we do not want to free address info */
 		if(uri->uri_ip){

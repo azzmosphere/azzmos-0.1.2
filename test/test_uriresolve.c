@@ -18,6 +18,15 @@
 #include <CuTest.h>
 #include <uriresolve.h>
 
+/*=====================================================================================
+ * IP resolution is dodgy at best.  That is we can not garantee that the system will
+ * allways all IP's for a given URI since it will resolve them of what the DNS and
+ * the load balancer decide is the amount of IPs a given FQP has.  Therefore this 
+ * test should be modified to suite.
+ * ====================================================================================
+ */
+#define IP_TEST_IP "192.0.32.10"
+
 regexpr_t *re;
 
 void
@@ -39,9 +48,9 @@ test_uri_resolve_2(CuTest *tc)
 {
 	char *href = strdup("http://www.example.com/"),
 		 *ip,
-		 *ipex = strdup("184.106.31.181");
+		 *ipex = strdup(IP_TEST_IP);
 	uriobj_t *uri = uri_alloc();
-	int err = 1;
+    int err = 1;
 	struct sockaddr_in *addr_in;
 	struct addrinfo *addr;
 	uri_parse(&uri,re,href);
@@ -51,71 +60,77 @@ test_uri_resolve_2(CuTest *tc)
 	while( addr != NULL){
 		addr_in = (struct sockaddr_in *)addr->ai_addr;
 		ip = malloc(addr->ai_addrlen);
-		//bzero(ip,addr->ai_addrlen);
 		strncpy(ip, inet_ntop(addr->ai_family,
 		               &addr_in->sin_addr,
 					   ip,
 					   addr->ai_addrlen), (addr->ai_addrlen - 1));
 		err = strcmp(ip,ipex);
-		printf("ip = '%s' - len = '%d' addrlen = %d\n", ip, strlen(ip), addr->ai_addrlen);
 		free(ip);
 		if(err == 0 ){
 			break;
 		}
 		addr = addr->ai_next;
 	}
+    uri_free(uri);
 	CuAssertIntEquals(tc,0,err);
 }
 
 void
 test_ref_resolve_1(CuTest *tc)
 {
-	char *href = strdup("http://www.example.com/");
+	char *href = strdup("http://www.example.com/"),
+         *result;
 	uriobj_t *uri = uri_alloc(),
-	         *ref = uri_alloc(),
-			 *trans;
-	uri_parse(&uri,re,href);
+             *ref = uri_alloc();	
+    uri_parse(&uri,re,href);
 	uri_parse_auth(&uri);
 	uri_resolve(&uri);
-	uri_parse(&ref,re,"path/to/uri.html");
 	ref = ref_resolve("path/to/uri.html",uri,re,false);
-	printf("ref->uri_path = '%s'\n", ref->uri_path);
+    result = strdup(ref->uri_path);
+    uri_free(uri);
+    uri_free(ref);
+	CuAssertStrEquals(tc,result,"/path/to/uri.html");
 }
 
 void
 test_ref_resolve_2(CuTest *tc)
 {
-	char *href = strdup("http://www.example.com/some/dir/to/path");
+	char *href = strdup("http://www.example.com/some/dir/to/path"),
+         *result;
 	uriobj_t *uri = uri_alloc(),
-	         *ref = uri_alloc();
+             *ref = uri_alloc();
 	uri_parse(&uri,re,href);
 	uri_parse_auth(&uri);
 	uri_resolve(&uri);
-	uri_parse(&ref,re,"path/to/uri.html");
 	ref = ref_resolve("path/to/uri.html",uri,re,false);
-	printf("ref->uri_path = '%s'\n", ref->uri_path);
+    result = strdup(ref->uri_path);
+    uri_free(ref);
+    uri_free(uri);
+    CuAssertStrEquals(tc,"/some/dir/to/path/to/uri.html",result);
 }
 
 void
 test_ref_resolve_3(CuTest *tc)
 {
-	char *href = strdup("http://www.example.com/");
+	char *href = strdup("http://www.example.com/"),
+         *result = NULL;
 	uriobj_t *uri = uri_alloc(),
-	         *ref = uri_alloc(),
-			 *trans;
+             *ref = uri_alloc();
 	uri_parse(&uri,re,href);
 	uri_parse_auth(&uri);
 	uri_resolve(&uri);
-	uri_parse(&ref,re,"path/to/uri.html");
 	ref = ref_resolve("path/to/uri.html",uri,re,false);
-	printf("ref->uri_path = '%s'\n", ref->uri_path);
+    result = strdup(ref->uri_path);
+    uri_free(ref);
+    uri_free(uri);
+    CuAssertStrEquals(tc,"/path/to/uri.html",result);
 }
 
 void
 test_uri_trans_ref1(CuTest *tc)
 {
 	char *href = strdup("http://www.example.com/some/dir/to/path"),
-	     *expect = strdup("/some/dir/to/path/to/uri.html");
+         *result;
 	uriobj_t *uri = uri_alloc(),
 	         *ref = uri_alloc(),
 			 *trans;
@@ -124,7 +139,11 @@ test_uri_trans_ref1(CuTest *tc)
 	uri_parse(&ref,re,"path/to/uri.html");
 	trans = uri_trans_ref(ref,uri,false);
 	uri_resolve(&uri);
-	CuAssertStrEquals(tc, trans->uri_path,"/some/dir/to/path/to/uri.html");
+    result = strdup(trans->uri_path);
+    uri_free(uri);
+    uri_free(trans);
+    uri_free(ref);
+	CuAssertStrEquals(tc, result,"/some/dir/to/path/to/uri.html");
 }
 
 
@@ -134,9 +153,9 @@ GetSuite()
 	CuSuite *suite = CuSuiteNew();
 	SUITE_ADD_TEST( suite, test_uri_resolve_1);
 	SUITE_ADD_TEST( suite, test_uri_resolve_2);
-	//SUITE_ADD_TEST( suite, test_ref_resolve_1);
-	//SUITE_ADD_TEST( suite, test_ref_resolve_2);
-	//SUITE_ADD_TEST( suite, test_ref_resolve_3);
+	SUITE_ADD_TEST( suite, test_ref_resolve_1);
+	SUITE_ADD_TEST( suite, test_ref_resolve_2);
+	SUITE_ADD_TEST( suite, test_ref_resolve_3);
 	SUITE_ADD_TEST( suite, test_uri_trans_ref1);
 }
 

@@ -26,7 +26,7 @@
  *                NULL then go to end of string. '\0'
  * =====================================================================================
  */
-char *
+extern char *
 usplice( const char *in, unsigned int start, unsigned int end)
 {
 	char *out;
@@ -60,7 +60,7 @@ usplice( const char *in, unsigned int start, unsigned int end)
  *                the  program is getting compiled on OSX
  * =====================================================================================
  */
-char *
+extern char *
 _macitoa_( int num )
 {
 	char *text;
@@ -92,11 +92,25 @@ _syslog_print_error( unsigned int tid, char *fname, int lineno, char *m1, char *
  *  Description:  Reset file back to the beginning, file is reopened in "w+" mode.
  * =====================================================================================
  */
-inline void
+extern void
 reset_file ( FILE *fh )
 {
 	rewind(fh);
 	fprintf(fh,"%d",EOF);
 	freopen(NULL,"w+",fh);
+}
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  safe_free
+ *  Description:  Free ptr in a safe manner.
+ * =====================================================================================
+ */
+extern void
+safe_free(void *ptr)
+{
+    if(ptr){
+        free(ptr);
+    }
 }
 

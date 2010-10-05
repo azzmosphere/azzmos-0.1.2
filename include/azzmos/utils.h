@@ -24,10 +24,11 @@
 #endif
 
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
-char * usplice( const char *in, unsigned int start, unsigned int end);
-char * _macitoa_( int num );
+extern char * usplice( const char *in, unsigned int start, unsigned int end);
+extern char * _macitoa_( int num );
 extern void _syslog_print_error( unsigned int tid, char *fname, int lineno, char *m1, char *m2, int pri );
-inline void  reset_file ( FILE *fh );
+extern void safe_free(void *ptr);
+extern void  reset_file ( FILE *fh );
 
 
 /* #####   EXPORTED MACROS   ######################################################## */
