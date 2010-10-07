@@ -55,7 +55,7 @@ libLTLIBRARIES_INSTALL = $(INSTALL)
 LTLIBRARIES = $(lib_LTLIBRARIES)
 libazzmos_la_LIBADD =
 am_libazzmos_la_OBJECTS = utils.lo regexpr.lo uriparse.lo uriobj.lo \
-	urinorm.lo
+	urinorm.lo httpheaders.lo
 libazzmos_la_OBJECTS = $(am_libazzmos_la_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(top_builddir)@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -196,7 +196,8 @@ libazzmos_la_SOURCES = utils.c \
 		       regexpr.c \
 		       uriparse.c \
 		       uriobj.c \
-		       urinorm.c
+		       urinorm.c \
+		       httpheaders.c
 
 AM_LDFLAGS = @POSTGRESQL_LDFLAGS@ \
 	     @LIBCURL@
@@ -270,6 +271,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/httpheaders.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regexpr.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/urinorm.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uriobj.Plo@am__quote@

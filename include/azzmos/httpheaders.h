@@ -5,7 +5,7 @@
  *
  *    Description:  HTTP header types and related functions
  *        Version:  1.0
- *        Created:  05/06/2010 22:58:34
+ *        Created:  07/10/2010 22:58:34
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -35,6 +35,7 @@ struct httpheaders_s {
 /* #####   FUNCTION DEFINITIONS   ################################################## */
 extern       httpheaders_t *httpheaders_alloc();
 extern void  httpheaders_free(httpheaders_t *hd);
-extern int   httpheaders_get(httpheaders_t **ht, FILE *tmpfile, const uriobj_t *base, CURL *cu);
-extern int   httpheaders_build(httpheaders_t **ht, FILE *tmpfile);
-extern char *httpheader_value(const httpheaders_t *ht, const char *key);
+extern int   httpheaders_init(httpheaders_t **hd);
+extern int   httpheaders_dl(httpheaders_t **hd, FILE *tmpfile, const uriobj_t *base, CURL *cu);
+extern int   httpheaders_buildf(httpheaders_t **hd, FILE *tmpfile);
+extern char *httpheader_value(const httpheaders_t *hd, const char *key);
