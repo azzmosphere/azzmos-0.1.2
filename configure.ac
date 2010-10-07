@@ -15,6 +15,7 @@ AC_PROG_LIBTOOL
 AC_CONFIG_FILES([
   Makefile
   include/Makefile
+  include/azzmos/Makefile
   lib/Makefile
   src/Makefile
   test/Makefile

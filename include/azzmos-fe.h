@@ -74,3 +74,11 @@
 #ifndef __AZZMOS_URINORM_H__
 #include <azzmos/urinorm.h>
 #endif
+
+/**************************************************************************************
+ * httpheaders object contain a list of http headers allocated by the host.  
+ **************************************************************************************
+ */
+#ifndef _AZZMOS_HTTPHEADERS_H_
+#include <azzmos/httpheaders.h>
+#endif
