@@ -38,6 +38,14 @@
 #endif
 
 /**************************************************************************************
+ * Fundemental database routines. 
+ **************************************************************************************
+ */
+#ifndef __AZZMOS_DB_H__
+#include <azzmos/db.h>
+#endif
+
+/**************************************************************************************
  * uriobj is the base class for just about everything to with the downloader or indexer.
  * it should called first so that other classes can use it.
  **************************************************************************************

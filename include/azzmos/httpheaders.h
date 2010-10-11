@@ -36,6 +36,5 @@ struct httpheaders_s {
 extern       httpheaders_t *httpheaders_alloc();
 extern void  httpheaders_free(httpheaders_t *hd);
 extern int   httpheaders_init(httpheaders_t **hd);
-extern int   httpheaders_dl(httpheaders_t **hd, FILE *tmpfile, const uriobj_t *base, CURL *cu);
 extern int   httpheaders_buildf(httpheaders_t **hd, FILE *tmpfile);
 extern char *httpheader_value(const httpheaders_t *hd, const char *key);

@@ -5,5 +5,6 @@ pkginclude_HEADERS = common.h \
 		  uriobj.h \
 		  uriparse.h \
 		  urinorm.h \
-          httpheaders.h
+                  httpheaders.h \
+		  db.h
 pkgincludedir= $(includedir)/azzmos

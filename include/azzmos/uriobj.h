@@ -53,3 +53,6 @@ struct uriobj_s {
 extern uriobj_t *uri_alloc();
 extern void      uri_free( uriobj_t *uri);
 extern int       uri_clone(uriobj_t **ref, const uriobj_t *base);
+extern int       uri_dbcreate(uriobj_t **uri);
+extern int       uri_dbupdate(uriobj_t **uri);
+extern int       uri_dbselect(uriobj_t **uri);
