@@ -1,15 +1,10 @@
 #ifndef CU_TEST_H
 #define CU_TEST_H
 
-#ifndef _SETJMP_H_
 #include <setjmp.h>
-#define _SETJMP_H_
-#endif
-
-#ifndef _STDARG_H_
 #include <stdarg.h>
-#define _STDARG_H_
-#endif
+
+#define CUTEST_VERSION  "CuTest 1.5"
 
 /* CuString */
 
@@ -37,6 +32,7 @@ void CuStringAppendChar(CuString* str, char ch);
 void CuStringAppendFormat(CuString* str, const char* format, ...);
 void CuStringInsert(CuString* str, const char* text, int pos);
 void CuStringResize(CuString* str, int newSize);
+void CuStringDelete(CuString* str);
 
 /* CuTest */
 
@@ -46,7 +42,7 @@ typedef void (*TestFunction)(CuTest *);
 
 struct CuTest
 {
-	const char* name;
+	char* name;
 	TestFunction function;
 	int failed;
 	int ran;
@@ -57,6 +53,7 @@ struct CuTest
 void CuTestInit(CuTest* t, const char* name, TestFunction function);
 CuTest* CuTestNew(const char* name, TestFunction function);
 void CuTestRun(CuTest* tc);
+void CuTestDelete(CuTest *t);
 
 /* Internal versions of assert functions -- use the public versions */
 void CuFail_Line(CuTest* tc, const char* file, int line, const char* message2, const char* message);
@@ -109,6 +106,7 @@ typedef struct
 
 void CuSuiteInit(CuSuite* testSuite);
 CuSuite* CuSuiteNew(void);
+void CuSuiteDelete(CuSuite *testSuite);
 void CuSuiteAdd(CuSuite* testSuite, CuTest *testCase);
 void CuSuiteAddSuite(CuSuite* testSuite, CuSuite* testSuite2);
 void CuSuiteRun(CuSuite* testSuite);

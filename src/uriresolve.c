@@ -43,8 +43,12 @@ uri_resolve( uriobj_t **uri)
 {
 	int gai_error = 0;
 	struct addrinfo hints,
-	               *addr;
+	               *addr,
+                   *addrfirst;
 	uriobj_t *trans;
+    uri_ip_t *ip, *tmp;
+    struct sockaddr_in *addr_in;
+    char     *ipin;
 	
 	/* create a tranisient URI to leave uri untouched on error*/
 	gai_error = uri_clone(&trans, *uri);
@@ -53,11 +57,12 @@ uri_resolve( uriobj_t **uri)
 		return EAI_SYSTEM;
 	}
 	bzero(&hints, sizeof(hints));
+    bzero(&addr, sizeof(addr));
 	
 	/* For this application assume TCP sockets */
 	hints.ai_protocol = IPPROTO_TCP;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_family = PF_UNSPEC;
+	hints.ai_family   = PF_UNSPEC;
 	
 	/* calculate what needs to be returned */
 	if( trans->uri_flags & URI_IP){
@@ -69,7 +74,40 @@ uri_resolve( uriobj_t **uri)
 	
 	/* all things going well copy the address structure to uri */
 	if( ! gai_error ){
-		trans->uri_ip = addr;
+        trans->uri_ip = calloc(sizeof(uri_ip_t),1);
+        ip = trans->uri_ip;
+        if(!ip){
+            return EAI_SYSTEM;
+        }
+        INIT_LIST_HEAD(&ip->ip_list);
+        addrfirst = addr;
+        while( addr != NULL){
+            tmp =  calloc(sizeof(uri_ip_t),1);
+            if(!tmp){
+                return EAI_SYSTEM;
+            }
+            addr_in = (struct sockaddr_in *)addr->ai_addr;
+            ipin = malloc(addr->ai_addrlen);
+            if(!tmp){
+                return EAI_SYSTEM;
+            }
+            strncpy(ipin, inet_ntop(addr->ai_family,
+                                           &addr_in->sin_addr,
+                                           ipin,
+                                           addr->ai_addrlen),
+                    (addr->ai_addrlen - 1)
+            );
+            tmp->ip_addr = strdup(ipin);
+            tmp->ip_ai_family = addr->ai_family;
+            list_add(&tmp->ip_list, &(ip->ip_list));
+            addr = addr->ai_next;
+        }
+        
+        /* free up memory and copy the newly created reference to uri */
+        if(addrfirst){
+            freeaddrinfo(addrfirst);
+            addrfirst = NULL;
+        }
 		uri_free(*uri);
 		*(uri) = trans;
 	}

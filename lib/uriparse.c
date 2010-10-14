@@ -334,9 +334,7 @@ uri_parse( uriobj_t **uri, regexpr_t *re, const char *fqp)
                 trans->uri_query  = usplice(fqp, re->re_ovector[RE_Q_S], re->re_ovector[RE_Q_E] -1);
                 trans->uri_frag   = usplice(fqp, re->re_ovector[RE_F_S], re->re_ovector[RE_F_E] -1);
                 trans->uri_id = trans->uri_flags = 0;
-                trans->uri_host = trans->uri_port
-								= NULL;
-				trans->uri_ip   = NULL;
+                trans->uri_host = trans->uri_port = NULL;
         }
         return err;
 }

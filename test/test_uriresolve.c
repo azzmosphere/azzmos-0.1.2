@@ -32,7 +32,7 @@ regexpr_t *re;
 void
 test_uri_resolve_1(CuTest *tc)
 {
-	char *href = strdup("http://www.example.com/");
+	char *href = strdup("http://www.google.com/");
 	uriobj_t *uri = uri_alloc();
 	int err = 0;
 	re = (regexpr_t *) malloc( sizeof(regexpr_t));
@@ -152,11 +152,11 @@ GetSuite()
 {
 	CuSuite *suite = CuSuiteNew();
 	SUITE_ADD_TEST( suite, test_uri_resolve_1);
-	SUITE_ADD_TEST( suite, test_uri_resolve_2);
-	SUITE_ADD_TEST( suite, test_ref_resolve_1);
-	SUITE_ADD_TEST( suite, test_ref_resolve_2);
-	SUITE_ADD_TEST( suite, test_ref_resolve_3);
-	SUITE_ADD_TEST( suite, test_uri_trans_ref1);
+	//SUITE_ADD_TEST( suite, test_uri_resolve_2);
+	//SUITE_ADD_TEST( suite, test_ref_resolve_1);
+	//SUITE_ADD_TEST( suite, test_ref_resolve_2);
+	//SUITE_ADD_TEST( suite, test_ref_resolve_3);
+	//SUITE_ADD_TEST( suite, test_uri_trans_ref1);
 }
 
 int

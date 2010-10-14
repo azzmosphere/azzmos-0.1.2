@@ -25,6 +25,9 @@
 #ifndef _AZZMOS_UTILS_H_
 #include <azzmos/utils.h>
 #endif
+#ifndef __AZZMOS_LIST_H__
+#include <azzmos/list.h>
+#endif
 
 /* #####   EXPORTED MACROS   ######################################################## */
 
@@ -36,17 +39,34 @@
 #define URI_PORT       0x0010
 
 /* #####   EXPORTED DATA TYPES   #################################################### */
+/************************************************************************************
+ * Container of IP addresses that are used for a specific uri.
+ ************************************************************************************
+ */
+struct uri_ip_s {
+    int              ip_ai_family; /* The IP family such as AF_INET6 or AF_INET */
+    char            *ip_addr;      /* dotted decimal or hex value of IP address */
+    struct list_head ip_list;      /* pointer to next address in linked list */
+} typedef uri_ip_t;
+
+/************************************************************************************
+ * URI object is a container for the textual string that represents the URI and also
+ * holds the address information.  
+ ************************************************************************************
+ */
 struct uriobj_s {
-	long   uri_id;             /* unique identifier for URI */
-	char *uri_scheme;          /* The scheme section */
-	char *uri_auth;            /* authority section */
-	char *uri_path;            /* path section  */
-	char *uri_query;           /* query section */
-	char *uri_frag;            /* fragment section */
-	char *uri_host;            /* hostname of URI */
-	char *uri_port;            /* uri port number */
-	long   uri_flags;          /* various flags for the uri */
-	struct addrinfo *uri_ip;   /* list of the URI resolved addresses */
+	long      uri_id;             /* unique identifier for URI */
+	char     *uri_scheme;          /* The scheme section */
+	char     *uri_auth;            /* authority section */
+	char     *uri_path;            /* path section  */
+	char     *uri_query;           /* query section */
+	char     *uri_frag;            /* fragment section */
+	char     *uri_host;            /* hostname of URI */
+	char     *uri_port;            /* uri port number */
+	long      uri_flags;           /* various flags for the uri */
+    uri_ip_t *uri_ip;              /* list of the URI resolved addresses */
+    
+	//struct addrinfo *uri_ip;   /* list of the URI resolved addresses */
 } typedef uriobj_t;
 
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
