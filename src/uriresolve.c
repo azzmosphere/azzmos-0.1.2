@@ -99,7 +99,7 @@ uri_resolve( uriobj_t **uri)
             );
             tmp->ip_addr = strdup(ipin);
             tmp->ip_ai_family = addr->ai_family;
-            list_add(&tmp->ip_list, &(ip->ip_list));
+            list_add(&(tmp->ip_list), &(ip->ip_list));
             addr = addr->ai_next;
         }
         

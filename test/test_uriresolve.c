@@ -40,7 +40,8 @@ test_uri_resolve_1(CuTest *tc)
 	uri_parse(&uri,re,href);
 	uri_parse_auth(&uri);
 	err = uri_resolve(&uri);
-	CuAssertIntEquals(tc,0,err);
+    printf("set a break point here\n");
+	CuAssertIntEquals(tc,0,err);    
 }
 
 void
@@ -157,6 +158,7 @@ GetSuite()
 	//SUITE_ADD_TEST( suite, test_ref_resolve_2);
 	//SUITE_ADD_TEST( suite, test_ref_resolve_3);
 	//SUITE_ADD_TEST( suite, test_uri_trans_ref1);
+    return suite;
 }
 
 int

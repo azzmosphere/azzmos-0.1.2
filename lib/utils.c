@@ -32,7 +32,7 @@ usplice( const char *in, unsigned int start, unsigned int end)
 	char *out;
 	int   l, i = 0;
 
-	if( (char *)end == NULL ){
+	if(!end){
 		end = strlen(in);
 	}
 	if( (l = end - start) < 0 ){

@@ -55,6 +55,7 @@ GetSuite()
 	SUITE_ADD_TEST( suite, test_uri_alloc);
 	SUITE_ADD_TEST( suite, test_uri_clone);
 	SUITE_ADD_TEST( suite, test_uri_free);
+    return suite;
 }
 
 int 

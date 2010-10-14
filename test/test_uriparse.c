@@ -387,6 +387,7 @@ GetSuite()
 	SUITE_ADD_TEST( suite, test_uri_parse_auth2);
 	SUITE_ADD_TEST( suite, test_uri_parse_auth3);
 	SUITE_ADD_TEST( suite, test_uri_parse_auth4);
+    return suite;
 }
 
 int

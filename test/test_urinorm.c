@@ -265,6 +265,7 @@ GetSuite()
 	SUITE_ADD_TEST( suite, test_uri_norm_ipv4_5);
 	SUITE_ADD_TEST( suite, test_uri_norm_ipv4_6);
 	SUITE_ADD_TEST( suite, test_uri_norm_ipv4_7);
+    return suite;
 }
 
 int
