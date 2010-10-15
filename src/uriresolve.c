@@ -31,6 +31,48 @@ return_err(const char *key, const char *val, const char *msg, int err)
 /* #####   FUNCTION DEFINITIONS  -  EXPORTED FUNCTIONS   ############################ */
 /* 
  * ===  FUNCTION  ======================================================================
+ *         Name:  create_ip_list
+ *  Description:  Internal function used to create the URI address linked list.
+ * =====================================================================================
+ */
+static int 
+create_ip_list(uri_ip_t **ipin, const struct addrinfo *addr)
+{
+    int rc = 0;
+    uri_ip_t *ipfirst = NULL, 
+             *ip = NULL;
+    struct sockaddr_in *addr_in;
+    while( addr != NULL){
+        ip =  calloc(sizeof(uri_ip_t),1);
+        if(!ip){
+            return EAI_SYSTEM;
+        }
+        if( !ipfirst){
+            ipfirst = ip;
+        }
+        
+        addr_in = (struct sockaddr_in *)addr->ai_addr;
+        ip->ip_addr = malloc(addr->ai_addrlen);
+        if(!ip->ip_addr){
+            return EAI_SYSTEM;
+        }
+        strncpy(ip->ip_addr, inet_ntop(addr->ai_family,
+                                       &addr_in->sin_addr,
+                                       ip->ip_addr,
+                                       addr->ai_addrlen),
+                (addr->ai_addrlen - 1)
+        );
+        ip->ip_ai_family = addr->ai_family;
+        ip->ip_cname     = strdup(addr->ai_canonname);
+        addr = addr->ai_next;
+        ip = ip->ip_next = NULL;
+    } 
+    *(ipin) = ipfirst;
+    return rc; 
+}
+
+/* 
+ * ===  FUNCTION  ======================================================================
  *         Name:  uri_resolve
  *  Description:  Use the DNS server or underlying OS resolver to fill out URI attributes.
  *                On error the gai_error code is returned, otherwise the return value is 
@@ -45,13 +87,10 @@ uri_resolve( uriobj_t **uri)
 	struct addrinfo hints,
 	               *addr,
                    *addrfirst;
-	uriobj_t *trans;
-    uri_ip_t *ip, *tmp;
-    struct sockaddr_in *addr_in;
-    char     *ipin;
+	uriobj_t *trans = *(uri);
+    uri_ip_t *ip;
 	
 	/* create a tranisient URI to leave uri untouched on error*/
-	gai_error = uri_clone(&trans, *uri);
 	if( gai_error ) {
 		errno = gai_error;
 		return EAI_SYSTEM;
@@ -74,42 +113,13 @@ uri_resolve( uriobj_t **uri)
 	
 	/* all things going well copy the address structure to uri */
 	if( ! gai_error ){
-        trans->uri_ip = calloc(sizeof(uri_ip_t),1);
-        ip = trans->uri_ip;
-        if(!ip){
-            return EAI_SYSTEM;
-        }
-        INIT_LIST_HEAD(&ip->ip_list);
-        addrfirst = addr;
-        while( addr != NULL){
-            tmp =  calloc(sizeof(uri_ip_t),1);
-            if(!tmp){
-                return EAI_SYSTEM;
-            }
-            addr_in = (struct sockaddr_in *)addr->ai_addr;
-            ipin = malloc(addr->ai_addrlen);
-            if(!tmp){
-                return EAI_SYSTEM;
-            }
-            strncpy(ipin, inet_ntop(addr->ai_family,
-                                           &addr_in->sin_addr,
-                                           ipin,
-                                           addr->ai_addrlen),
-                    (addr->ai_addrlen - 1)
-            );
-            tmp->ip_addr = strdup(ipin);
-            tmp->ip_ai_family = addr->ai_family;
-            list_add(&(tmp->ip_list), &(ip->ip_list));
-            addr = addr->ai_next;
-        }
+        gai_error = create_ip_list(&trans->uri_ip, addr);
         
         /* free up memory and copy the newly created reference to uri */
-        if(addrfirst){
-            freeaddrinfo(addrfirst);
-            addrfirst = NULL;
+        if(addr){
+            freeaddrinfo(addr);
+            addr = NULL;
         }
-		uri_free(*uri);
-		*(uri) = trans;
 	}
 	return gai_error;
 }

@@ -55,8 +55,7 @@
 extern void     
 uri_free( uriobj_t *uri)
 {
-    struct list_head *pos, *q;
-    uri_ip_t *tmp, *ip;
+    uri_ip_t *tmp, *ip, *pos;
 	if( uri ) {
 		safe_free(uri->uri_scheme);
 		safe_free(uri->uri_auth);
@@ -68,14 +67,16 @@ uri_free( uriobj_t *uri)
 		
   		/* After a clone we do not want to free address info */
 		if(uri->uri_ip){
-            ip = uri->uri_ip;
-            list_for_each_safe( pos, q, &ip->ip_list ) {
-                tmp = list_entry(pos, uri_ip_t, ip_list);
-                list_del(&tmp->ip_list);
-                safe_free(tmp->ip_addr);
-                free(tmp);
-                tmp = NULL;
+            ip  = uri->uri_ip;
+            tmp = ip->ip_next;
+            while( tmp != NULL){
+                pos = tmp;
+                tmp = pos->ip_next;
+                safe_free(pos->ip_addr);
+                free(pos);
+                pos = NULL;
             }
+
 		}
 		free(uri);
         uri = NULL;

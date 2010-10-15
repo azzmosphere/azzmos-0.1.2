@@ -46,7 +46,8 @@
 struct uri_ip_s {
     int              ip_ai_family; /* The IP family such as AF_INET6 or AF_INET */
     char            *ip_addr;      /* dotted decimal or hex value of IP address */
-    struct list_head ip_list;      /* pointer to next address in linked list */
+    struct uri_ip_t *ip_next;      /* pointer to next address in linked list */
+    char            *ip_cname;     /* address canonlocial name */
 } typedef uri_ip_t;
 
 /************************************************************************************

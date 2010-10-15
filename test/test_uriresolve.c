@@ -40,6 +40,7 @@ test_uri_resolve_1(CuTest *tc)
 	uri_parse(&uri,re,href);
 	uri_parse_auth(&uri);
 	err = uri_resolve(&uri);
+    printf("ip = '%s'\n", uri->uri_ip->ip_addr);
     printf("set a break point here\n");
 	CuAssertIntEquals(tc,0,err);    
 }
