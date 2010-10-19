@@ -23,6 +23,21 @@
 /* #####   FUNCTION DEFINITIONS  -  EXPORTED FUNCTIONS   ############################ */
 /* 
  * ===  FUNCTION  ======================================================================
+ *         Name:  free_uriip
+ *  Description:  free the uriip structure.
+ * =====================================================================================
+ */
+static void
+free_uri_ip(uri_ip_t *ip)
+{
+    safe_free(ip->ip_addr);
+    safe_free(ip->ip_cname);
+    free(ip);
+    ip = NULL;
+}
+
+/* 
+ * ===  FUNCTION  ======================================================================
  *         Name:  uri_alloc
  *  Description:  Create and initlize a new URI object.  All pointers are initilized 
  *                to NULL and the flags and id are set to '0'
@@ -31,19 +46,18 @@
  extern uriobj_t *
  uri_alloc()
  {
-	uriobj_t *uri = (uriobj_t *) calloc(sizeof(uriobj_t),2);
-	if( uri ) {
-		uri->uri_id = uri->uri_flags = 0;
-		uri->uri_scheme = uri->uri_auth  =
-		                  uri->uri_path  =
-						  uri->uri_query =
-						  uri->uri_frag  =
-						  uri->uri_host  =
-						  uri->uri_port  =
-						  NULL;
-		uri->uri_ip  =  NULL;
-	}
-	return uri;
+     uriobj_t *uri = (uriobj_t *) calloc(sizeof(uriobj_t),2);
+     if( uri ) {
+         uri->uri_id = uri->uri_flags = 0;
+         uri->uri_scheme = uri->uri_auth  =
+            uri->uri_path  =
+            uri->uri_query =
+            uri->uri_frag  =
+            uri->uri_host  =
+            uri->uri_port  = NULL;
+         uri->uri_ip   =  NULL;
+     }
+     return uri;
  }
 
 /* 
@@ -56,31 +70,29 @@ extern void
 uri_free( uriobj_t *uri)
 {
     uri_ip_t *tmp, *ip, *pos;
-	if( uri ) {
-		safe_free(uri->uri_scheme);
-		safe_free(uri->uri_auth);
-		safe_free(uri->uri_path);
-		safe_free(uri->uri_query);
-		safe_free(uri->uri_frag);
-		safe_free(uri->uri_host);
-		safe_free(uri->uri_port);
-		
-  		/* After a clone we do not want to free address info */
-		if(uri->uri_ip){
+    if( uri ) {
+        safe_free(uri->uri_scheme);
+        safe_free(uri->uri_auth);
+        safe_free(uri->uri_path);
+        safe_free(uri->uri_query);
+        safe_free(uri->uri_frag);
+        safe_free(uri->uri_host);
+        safe_free(uri->uri_port);
+        
+        /* After a clone we do not want to free address info */
+        if(uri->uri_ip){
             ip  = uri->uri_ip;
             tmp = ip->ip_next;
             while( tmp != NULL){
                 pos = tmp;
                 tmp = pos->ip_next;
-                safe_free(pos->ip_addr);
-                free(pos);
-                pos = NULL;
+                free_uri_ip(pos);
             }
-
-		}
-		free(uri);
+            free_uri_ip(ip);
+        }
+        free(uri);
         uri = NULL;
-	}
+    }
 }
 
 /* 

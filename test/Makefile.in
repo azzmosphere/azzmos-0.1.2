@@ -32,9 +32,11 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 check_PROGRAMS = test_uriobj$(EXEEXT) test_uriparse$(EXEEXT) \
-	test_urinorm$(EXEEXT) test_uriresolve$(EXEEXT)
+	test_urinorm$(EXEEXT) test_uriresolve$(EXEEXT) \
+	test_urilist$(EXEEXT)
 TESTS = test_uriobj$(EXEEXT) test_uriparse$(EXEEXT) \
-	test_urinorm$(EXEEXT) test_uriresolve$(EXEEXT)
+	test_urinorm$(EXEEXT) test_uriresolve$(EXEEXT) \
+	test_urilist$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -51,6 +53,9 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 am__objects_1 = CuTest.$(OBJEXT)
+am_test_urilist_OBJECTS = test_urilist.$(OBJEXT) $(am__objects_1)
+test_urilist_OBJECTS = $(am_test_urilist_OBJECTS)
+test_urilist_LDADD = $(LDADD)
 am_test_urinorm_OBJECTS = test_urinorm.$(OBJEXT) $(am__objects_1)
 test_urinorm_OBJECTS = $(am_test_urinorm_OBJECTS)
 test_urinorm_LDADD = $(LDADD)
@@ -76,8 +81,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-DIST_SOURCES = $(test_urinorm_SOURCES) $(test_uriobj_SOURCES) \
-	$(test_uriparse_SOURCES) $(test_uriresolve_SOURCES)
+DIST_SOURCES = $(test_urilist_SOURCES) $(test_urinorm_SOURCES) \
+	$(test_uriobj_SOURCES) $(test_uriparse_SOURCES) \
+	$(test_uriresolve_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -211,6 +217,7 @@ test_urinorm_SOURCES = test_urinorm.c $(SOURCES)
 test_uriresolve_SOURCES = test_uriresolve.c $(SOURCES) \
 			  $(top_srcdir)/src/uriresolve.c
 
+test_urilist_SOURCES = test_urilist.c $(SOURCES)
 all: all-am
 
 .SUFFIXES:
@@ -251,6 +258,9 @@ clean-checkPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+test_urilist$(EXEEXT): $(test_urilist_OBJECTS) $(test_urilist_DEPENDENCIES) 
+	@rm -f test_urilist$(EXEEXT)
+	$(LINK) $(test_urilist_OBJECTS) $(test_urilist_LDADD) $(LIBS)
 test_urinorm$(EXEEXT): $(test_urinorm_OBJECTS) $(test_urinorm_DEPENDENCIES) 
 	@rm -f test_urinorm$(EXEEXT)
 	$(LINK) $(test_urinorm_OBJECTS) $(test_urinorm_LDADD) $(LIBS)
@@ -271,6 +281,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CuTest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_urilist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_urinorm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_uriobj.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_uriparse.Po@am__quote@

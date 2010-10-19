@@ -59,7 +59,7 @@ test_uri_parse2(CuTest *tc)
         int erroffset;
         int ovector[60];
         uriobj_t *uri = uri_alloc();
-        int   err = err = uri_parse( &uri, re, fqp);
+        int err = uri_parse( &uri, re, fqp);
         CuAssertIntEquals(tc, 0, err);
 }
 

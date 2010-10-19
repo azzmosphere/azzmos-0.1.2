@@ -29,8 +29,6 @@
 #include <azzmos/list.h>
 #endif
 
-/* #####   EXPORTED MACROS   ######################################################## */
-
 /* #####   EXPORTED TYPE DEFINITIONS   ############################################## */
 #define URI_REGNAME    0x0001
 #define URI_IPV6       0x0002
@@ -66,14 +64,10 @@ struct uriobj_s {
 	char     *uri_port;            /* uri port number */
 	long      uri_flags;           /* various flags for the uri */
     uri_ip_t *uri_ip;              /* list of the URI resolved addresses */
-    
-	//struct addrinfo *uri_ip;   /* list of the URI resolved addresses */
+    struct  list_head uri_list;
 } typedef uriobj_t;
 
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
 extern uriobj_t *uri_alloc();
 extern void      uri_free( uriobj_t *uri);
 extern int       uri_clone(uriobj_t **ref, const uriobj_t *base);
-extern int       uri_dbcreate(uriobj_t **uri);
-extern int       uri_dbupdate(uriobj_t **uri);
-extern int       uri_dbselect(uriobj_t **uri);
