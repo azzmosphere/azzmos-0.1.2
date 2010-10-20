@@ -19,7 +19,7 @@
  */
 
 /* #####   HEADER FILE INCLUDES   ################################################### */
-#include <uriresolve.h>
+#include <azzmos/uriresolve.h>
 /* #####   FUNCTION DEFINITIONS  -  LCOAL FUNCTIONS   ############################### */
 static void
 return_err(const char *key, const char *val, const char *msg, int err)
@@ -48,11 +48,10 @@ create_ip_list(uri_ip_t **ipin, const struct addrinfo *addr)
             return EAI_SYSTEM;
         }
         if( !ipfirst){
-            ipfirst = ip;
+            INIT_LIST_HEAD(&ip->ip_list);
         }
-        
         addr_in = (struct sockaddr_in *)addr->ai_addr;
-        ip->ip_addr = malloc(addr->ai_addrlen);
+        ip->ip_addr = calloc(addr->ai_addrlen,1);
         if(!ip->ip_addr){
             return EAI_SYSTEM;
         }
@@ -65,7 +64,12 @@ create_ip_list(uri_ip_t **ipin, const struct addrinfo *addr)
         ip->ip_ai_family = addr->ai_family;
         ip->ip_cname     = strdup(addr->ai_canonname);
         addr = addr->ai_next;
-        ip = ip->ip_next = NULL;
+        if(!ipfirst){
+            ipfirst = ip;
+        }
+        else {
+            list_add(&ip->ip_list, &ipfirst->ip_list);
+        }
     } 
     *(ipin) = ipfirst;
     return rc; 

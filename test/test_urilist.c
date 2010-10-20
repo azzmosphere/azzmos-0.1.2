@@ -26,13 +26,12 @@ test_urilist_1(CuTest *tc)
 {
     re = (regexpr_t *) malloc( sizeof(regexpr_t));
     uri_init_regex(re);
-    uriobj_t *uri = uri_alloc(), *first;
-    list = uri_alloc();
+    uriobj_t *uri = uri_alloc();    
+    list = uri_alloc_list();
     char *fqp1 = "http://www.ics.uci.edu/pub/ietf/uri/#Related",
          *fqp2 = "http://www.example.com/a/path/to/uri";
     uri_parse(&list, re, fqp1);
     uri_parse(&uri, re, fqp2);
-    INIT_LIST_HEAD(&list->uri_list);
     list_add(&uri->uri_list, &list->uri_list);
 }
 
@@ -66,6 +65,13 @@ test_urilist_3(CuTest *tc)
     }
 }
 
+void
+test_urilist_4(CuTest *tc)
+{
+    uri_free_list(list);
+}
+
+
 CuSuite *
 GetSuite()
 {
@@ -73,6 +79,7 @@ GetSuite()
 	SUITE_ADD_TEST( suite, test_urilist_1);
     SUITE_ADD_TEST( suite, test_urilist_2);
     SUITE_ADD_TEST( suite, test_urilist_3);
+    SUITE_ADD_TEST( suite, test_urilist_4);
     return suite;
 }
 

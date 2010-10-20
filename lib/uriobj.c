@@ -69,7 +69,8 @@ free_uri_ip(uri_ip_t *ip)
 extern void     
 uri_free( uriobj_t *uri)
 {
-    uri_ip_t *tmp, *ip, *pos;
+    uri_ip_t *tmp, *ip;
+    struct list_head *pos, *n;
     if( uri ) {
         safe_free(uri->uri_scheme);
         safe_free(uri->uri_auth);
@@ -79,14 +80,13 @@ uri_free( uriobj_t *uri)
         safe_free(uri->uri_host);
         safe_free(uri->uri_port);
         
-        /* After a clone we do not want to free address info */
+        /* free the ip address info */
         if(uri->uri_ip){
-            ip  = uri->uri_ip;
-            tmp = ip->ip_next;
-            while( tmp != NULL){
-                pos = tmp;
-                tmp = pos->ip_next;
-                free_uri_ip(pos);
+            ip = uri->uri_ip;
+            list_for_each_safe(pos, n, &ip->ip_list){
+                tmp = list_entry(pos, uri_ip_t, ip_list);
+                list_del(&tmp->ip_list);
+                uri_ip_free(tmp);
             }
             free_uri_ip(ip);
         }
@@ -121,3 +121,38 @@ uri_free( uriobj_t *uri)
 	*uri = u;
 	return errno;
  }
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  uri_free_list
+ *  Description:  Free the entire linked list of URI objects
+ * =====================================================================================
+ */
+extern void      
+uri_free_list(uriobj_t *list)
+{
+    uriobj_t *uri;
+    struct list_head *pos, *n;
+    list_for_each_safe(pos, n, &list->uri_list){
+        uri = list_entry(pos, uriobj_t, uri_list);
+        list_del(&uri->uri_list);
+        uri_free(uri);
+    }
+    uri_free(list);
+}
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  uri_alloc_list
+ *  Description:  Allocate memory and initilize the URI list object
+ * =====================================================================================
+ */
+extern uriobj_t *
+uri_alloc_list()
+{
+    uriobj_t *list = uri_alloc();
+    if(list){
+        INIT_LIST_HEAD(&list->uri_list);
+    }
+    return list;
+}

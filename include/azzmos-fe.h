@@ -90,3 +90,11 @@
 #ifndef _AZZMOS_HTTPHEADERS_H_
 #include <azzmos/httpheaders.h>
 #endif
+
+/**************************************************************************************
+ * uriresolve resolves ip addresses and creates the host section of the uriobject.  
+ **************************************************************************************
+ */
+#ifndef __AZZMOS_URIRESOLVE_H__
+#include <azzmos/uriresolve.h>
+#endif

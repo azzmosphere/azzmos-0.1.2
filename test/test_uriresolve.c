@@ -16,7 +16,7 @@
  * =====================================================================================
  */
 #include <CuTest.h>
-#include <uriresolve.h>
+#include <azzmos/uriresolve.h>
 
 /*=====================================================================================
  * IP resolution is dodgy at best.  That is we can not garantee that the system will
@@ -41,12 +41,27 @@ test_uri_resolve_1(CuTest *tc)
 	uri_parse_auth(&uri);
 	err = uri_resolve(&uri);
     printf("ip = '%s'\n", uri->uri_ip->ip_addr);
-    printf("set a break point here\n");
+    uri_free(uri);
 	CuAssertIntEquals(tc,0,err);    
 }
 
 void
 test_uri_resolve_2(CuTest *tc)
+{
+	char *href = strdup("http://www.example.com/");
+	uriobj_t *uri = uri_alloc();
+	int err = 0;
+    uri_parse(&uri,re,href);
+	uri_parse_auth(&uri);
+	err = uri_resolve(&uri);
+    printf("ip = '%s'\n", uri->uri_ip->ip_addr);
+	CuAssertPtrNotNull(tc,uri->uri_ip->ip_addr);  
+    uri_free(uri);
+}
+
+
+void
+test_uri_resolve_2_old(CuTest *tc)
 {
 	char *href = strdup("http://www.example.com/"),
 		 *ip,

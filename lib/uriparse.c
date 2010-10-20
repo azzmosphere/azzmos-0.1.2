@@ -211,7 +211,7 @@ shift_segment( char **path, const int offset)
 				segment[(i + 1)] = '\0';
         }
 		i = i + offset;
-        *(path) = usplice( pref, i, (unsigned int) NULL);
+        *(path) = usplice( pref, i, 0);
         realloc( (void *) segment, (strlen(segment) + 1));
         return segment;
 }

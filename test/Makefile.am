@@ -7,8 +7,7 @@ AM_LDFLAGS = @POSTGRESQL_LDFLAGS@ \
 test_uriobj_SOURCES     = test_uriobj.c $(SOURCES)
 test_uriparse_SOURCES   = test_uriparse.c $(SOURCES)
 test_urinorm_SOURCES    = test_urinorm.c $(SOURCES)
-test_uriresolve_SOURCES = test_uriresolve.c $(SOURCES) \
-			  $(top_srcdir)/src/uriresolve.c
+test_uriresolve_SOURCES = test_uriresolve.c $(SOURCES)
 test_urilist_SOURCES    = test_urilist.c $(SOURCES)
 check_PROGRAMS = test_uriobj \
 		 test_uriparse \

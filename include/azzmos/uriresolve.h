@@ -18,8 +18,16 @@
 
 
 /* #####   HEADER FILE INCLUDES   ################################################### */
-#define __URIRESOLVE_H__
-#include <azzmos-fe.h>
+#define __AZZMOS_URIRESOLVE_H__
+#ifndef __AZZMOS_COMMON_H__
+#include <azzmos/common.h>
+#endif
+#ifndef __AZZMOS_URIOBJ_H__
+#include <azzmos/uriobj.h>
+#endif
+#ifndef _AZZMOS_REGEXPR_H_
+#include <azzmos/regexpr.h>
+#endif
 
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
 extern int uri_resolve( uriobj_t **uri);

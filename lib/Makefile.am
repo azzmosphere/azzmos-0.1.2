@@ -7,7 +7,8 @@ libazzmos_la_SOURCES = utils.c \
 		       uriobj.c \
 		       urinorm.c \
 		       httpheaders.c \
-		       db.c
+		       db.c \
+		       uriresolve.c
 AM_LDFLAGS = @POSTGRESQL_LDFLAGS@ \
 	     @LIBCURL@
 

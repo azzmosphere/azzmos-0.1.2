@@ -44,8 +44,8 @@
 struct uri_ip_s {
     int              ip_ai_family; /* The IP family such as AF_INET6 or AF_INET */
     char            *ip_addr;      /* dotted decimal or hex value of IP address */
-    struct uri_ip_t *ip_next;      /* pointer to next address in linked list */
     char            *ip_cname;     /* address canonlocial name */
+    struct list_head ip_list;      /* pointer to next address in linked list */
 } typedef uri_ip_t;
 
 /************************************************************************************
@@ -54,7 +54,7 @@ struct uri_ip_s {
  ************************************************************************************
  */
 struct uriobj_s {
-	long      uri_id;             /* unique identifier for URI */
+	long      uri_id;              /* unique identifier for URI */
 	char     *uri_scheme;          /* The scheme section */
 	char     *uri_auth;            /* authority section */
 	char     *uri_path;            /* path section  */
@@ -64,10 +64,12 @@ struct uriobj_s {
 	char     *uri_port;            /* uri port number */
 	long      uri_flags;           /* various flags for the uri */
     uri_ip_t *uri_ip;              /* list of the URI resolved addresses */
-    struct  list_head uri_list;
+    struct  list_head uri_list;    /* linked list of uri objects */
 } typedef uriobj_t;
 
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
 extern uriobj_t *uri_alloc();
 extern void      uri_free( uriobj_t *uri);
 extern int       uri_clone(uriobj_t **ref, const uriobj_t *base);
+extern void      uri_free_list(uriobj_t *list);
+extern uriobj_t *uri_alloc_list();
