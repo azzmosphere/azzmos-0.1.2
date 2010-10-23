@@ -55,9 +55,11 @@ struct regexpr_s {
 /* #####   EXPORTED VARIABLES   ##################################################### */
 
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
-extern char *re_strerror( const int err);
-extern int   re_init( regexpr_t *re, const int id);
-extern int   re_append( regexpr_t *re, const int id);
-extern int   re_comp( regexpr_t *re, const int id, const char *pattern, const int options, const unsigned char * tableptr);
-extern int   re_exec( regexpr_t *re, const int id);
-extern int   re_find( regexpr_t *re, const int id);
+extern char      *re_strerror( const int err);
+extern int        re_init( regexpr_t *re, const int id);
+extern int        re_append( regexpr_t *re, const int id);
+extern int        re_comp( regexpr_t *re, const int id, const char *pattern, const int options, const unsigned char * tableptr);
+extern int        re_exec( regexpr_t *re, const int id);
+extern int        re_find( regexpr_t *re, const int id);
+extern regexpr_t *re_alloc();
+extern void       re_free(regexpr_t *re);

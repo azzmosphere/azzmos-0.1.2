@@ -169,3 +169,10 @@ re_exec( regexpr_t *re, const int id)
 	erroroffset = pcre_exec(re->re_code, *re->re_extra, *re->re_subject, re->re_length, re->re_startoffset, re->re_options, re->re_ovector, re->re_ovecsize);
 	return erroroffset;
 }
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  re_alloc
+ *  Description:  Create a new regular expression object.
+ * =====================================================================================
+ */

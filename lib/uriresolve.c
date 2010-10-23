@@ -43,7 +43,7 @@ create_ip_list(uri_ip_t **ipin, const struct addrinfo *addr)
              *ip = NULL;
     struct sockaddr_in *addr_in;
     while( addr != NULL){
-        ip =  calloc(sizeof(uri_ip_t),1);
+        ip =  calloc(1,sizeof(uri_ip_t));
         if(!ip){
             return EAI_SYSTEM;
         }
@@ -51,7 +51,7 @@ create_ip_list(uri_ip_t **ipin, const struct addrinfo *addr)
             INIT_LIST_HEAD(&ip->ip_list);
         }
         addr_in = (struct sockaddr_in *)addr->ai_addr;
-        ip->ip_addr = calloc(addr->ai_addrlen,1);
+        ip->ip_addr = calloc(1,addr->ai_addrlen);
         if(!ip->ip_addr){
             return EAI_SYSTEM;
         }
@@ -94,18 +94,14 @@ uri_resolve( uriobj_t **uri)
 	uriobj_t *trans = *(uri);
     uri_ip_t *ip;
 	
-	/* create a tranisient URI to leave uri untouched on error*/
-	if( gai_error ) {
-		errno = gai_error;
-		return EAI_SYSTEM;
-	}
+	/* zero fill structure */
 	bzero(&hints, sizeof(hints));
     bzero(&addr, sizeof(addr));
 	
 	/* For this application assume TCP sockets */
 	hints.ai_protocol = IPPROTO_TCP;
 	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_family   = PF_UNSPEC;
+	hints.ai_family   = URI_AI_FAMILY;
 	
 	/* calculate what needs to be returned */
 	if( trans->uri_flags & URI_IP){
@@ -151,7 +147,7 @@ ref_resolve(char *href, const uriobj_t *base, regexpr_t *re, const bool strict)
 {
 	uriobj_t *trans,
 			 *ref = uri_alloc();
-	if( errno ){
+	if( !ref ){
 		ERROR("could not allocate memory for reference object");
 		return NULL;
 	}

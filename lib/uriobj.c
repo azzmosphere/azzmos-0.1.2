@@ -46,7 +46,7 @@ free_uri_ip(uri_ip_t *ip)
  extern uriobj_t *
  uri_alloc()
  {
-     uriobj_t *uri = (uriobj_t *) calloc(sizeof(uriobj_t),2);
+     uriobj_t *uri = (uriobj_t *) calloc(1,sizeof(uriobj_t));
      if( uri ) {
          uri->uri_id = uri->uri_flags = 0;
          uri->uri_scheme = uri->uri_auth  =
@@ -86,7 +86,7 @@ uri_free( uriobj_t *uri)
             list_for_each_safe(pos, n, &ip->ip_list){
                 tmp = list_entry(pos, uri_ip_t, ip_list);
                 list_del(&tmp->ip_list);
-                uri_ip_free(tmp);
+                free_uri_ip(tmp);
             }
             free_uri_ip(ip);
         }
@@ -106,7 +106,7 @@ uri_free( uriobj_t *uri)
  uri_clone(uriobj_t **uri, const uriobj_t *base)
  {
 	uriobj_t *u = uri_alloc();
-	if( errno ) {
+	if( !u ) {
 		return errno;
 	}
 	u->uri_flags = base->uri_flags;

@@ -73,3 +73,4 @@ extern void      uri_free( uriobj_t *uri);
 extern int       uri_clone(uriobj_t **ref, const uriobj_t *base);
 extern void      uri_free_list(uriobj_t *list);
 extern uriobj_t *uri_alloc_list();
+extern void      uri_ip_free(uri_ip_t *ip);

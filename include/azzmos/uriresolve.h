@@ -30,5 +30,15 @@
 #endif
 
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
+/**************************************************************************************
+ * Currently this implementation uses PF_INET instead of PF_UNSPEC,  this is because 
+ * the resolution of IPv6 still unreliable on the internet at the moment.  However it
+ * is expected that this will change one day and when it does PF_UNSPEC should be 
+ * used.
+ **************************************************************************************
+ */
+#define URI_AI_FAMILY PF_INET
+
+/* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
 extern int uri_resolve( uriobj_t **uri);
 uriobj_t * ref_resolve(char *href, const uriobj_t *base, regexpr_t *re, const bool strict);

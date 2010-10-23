@@ -520,7 +520,7 @@ uri_parse_auth(uriobj_t **uri)
 	}
 	len = strlen(auth);
 	host = (char *) malloc(len + 1);
-	if( errno ){
+	if( !host ){
 		return errno;
 	}
 	buffer = host;

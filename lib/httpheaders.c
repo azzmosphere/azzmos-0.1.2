@@ -27,7 +27,7 @@
 extern       
 httpheaders_t *httpheaders_alloc()
 {
-    httpheaders_t *hd = calloc(sizeof(httpheaders_t),1);
+    httpheaders_t *hd = calloc(1,sizeof(httpheaders_t));
     return hd;
 }
 

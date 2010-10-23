@@ -45,52 +45,46 @@ test_uri_resolve_1(CuTest *tc)
 	CuAssertIntEquals(tc,0,err);    
 }
 
+/*=====================================================================================
+ * RFC 2606 madates that the second level domains .example.(com|net|org) must exist.
+ * ====================================================================================
+ */
 void
 test_uri_resolve_2(CuTest *tc)
 {
-	char *href = strdup("http://www.example.com/");
+	char *href = strdup("http://example.com/");
 	uriobj_t *uri = uri_alloc();
 	int err = 0;
     uri_parse(&uri,re,href);
 	uri_parse_auth(&uri);
 	err = uri_resolve(&uri);
-    printf("ip = '%s'\n", uri->uri_ip->ip_addr);
+    printf("ip    = '%s'\n", uri->uri_ip->ip_addr);
+    printf("cname = '%s'\n", uri->uri_ip->ip_cname);
 	CuAssertPtrNotNull(tc,uri->uri_ip->ip_addr);  
     uri_free(uri);
 }
 
-
+/*=====================================================================================
+ * RFC 2606 madates that the first level domains .test, .example, .invalid and 
+ * .localhost can not be registered.  It has become common practice for servers
+ * to use .localhost to reference themselves, therefore for testing handling of
+ * invalid domains this test code uses the domain ".invalid"
+ * ====================================================================================
+ */
 void
-test_uri_resolve_2_old(CuTest *tc)
+test_uri_resolve_3(CuTest *tc)
 {
-	char *href = strdup("http://www.example.com/"),
-		 *ip,
-		 *ipex = strdup(IP_TEST_IP);
+	char *href = strdup("http://invalid/");
 	uriobj_t *uri = uri_alloc();
-    int err = 1;
-	struct sockaddr_in *addr_in;
-	struct addrinfo *addr;
-	uri_parse(&uri,re,href);
+	int err = 0;
+    uri_parse(&uri,re,href);
 	uri_parse_auth(&uri);
-	uri_resolve(&uri);
-	addr = uri->uri_ip;
-	while( addr != NULL){
-		addr_in = (struct sockaddr_in *)addr->ai_addr;
-		ip = malloc(addr->ai_addrlen);
-		strncpy(ip, inet_ntop(addr->ai_family,
-		               &addr_in->sin_addr,
-					   ip,
-					   addr->ai_addrlen), (addr->ai_addrlen - 1));
-		err = strcmp(ip,ipex);
-		free(ip);
-		if(err == 0 ){
-			break;
-		}
-		addr = addr->ai_next;
-	}
+	err = uri_resolve(&uri);
+    printf("err    = '%d'\n", err); 
+    printf("errstr = '%s'\n",gai_strerror(err));
     uri_free(uri);
-	CuAssertIntEquals(tc,0,err);
 }
+
 
 void
 test_ref_resolve_1(CuTest *tc)
@@ -169,7 +163,8 @@ GetSuite()
 {
 	CuSuite *suite = CuSuiteNew();
 	SUITE_ADD_TEST( suite, test_uri_resolve_1);
-	//SUITE_ADD_TEST( suite, test_uri_resolve_2);
+	SUITE_ADD_TEST( suite, test_uri_resolve_2);
+    SUITE_ADD_TEST( suite, test_uri_resolve_3);
 	//SUITE_ADD_TEST( suite, test_ref_resolve_1);
 	//SUITE_ADD_TEST( suite, test_ref_resolve_2);
 	//SUITE_ADD_TEST( suite, test_ref_resolve_3);
