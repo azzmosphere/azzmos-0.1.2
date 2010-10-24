@@ -41,4 +41,4 @@
 
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
 extern int uri_resolve( uriobj_t **uri);
-uriobj_t * ref_resolve(char *href, const uriobj_t *base, regexpr_t *re, const bool strict);
+extern int ref_resolve(uriobj_t **uri, const uriobj_t *base,const char *href, regexpr_t *re, const bool strict);

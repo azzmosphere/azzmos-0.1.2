@@ -392,54 +392,54 @@ uri_norm_port( char **pin)
 extern int
 uri_norm_path( char **pathin)
 {
-        int err = 0,
-            len = 0,
-            i   = 0,
-            n   = 0;
-        char *path = URI_CP_PT(*pathin),
-             *ou,
-             *pct;
-        if( !path){
-                return EINVAL;
+    int err = 0,
+        len = 0,
+        i   = 0,
+        n   = 0;
+    char *path = URI_CP_PT(*pathin),
+        *ou,
+        *pct;
+    if( !path){
+        return EINVAL;
+    }
+    len = strlen(path);
+    ou  = (char *) malloc(len + 1);
+    pct = (char *) malloc(4);
+    if( !pct || !ou ){
+        return errno;
+    }
+    for(;i < len; i ++){
+        if( is_pchar(path[i]) || path[i] == '/'){
+            ou[n ++] = path[i];
         }
-        len = strlen(path);
-        ou  = (char *) malloc(len + 1);
-        pct = (char *) malloc(4);
-        if( errno ){
-                return errno;
+        else if(path[i] == '%'){
+            if( (i + 2) > len){
+                err = EILSEQ;
+                break;
+            }
+            pct[0] = path[i ++];
+            pct[1] = path[i ++];
+            pct[2] = path[i ++];
+            pct[3] = '\0';
+            err = norm_pct(&pct);
+            if( err ){
+                break;
+            }
+            ou[n ++] = pct[0];
+            ou[n ++] = pct[1];
+            ou[n ++] = pct[2];
         }
-        for(;i < len; i ++){
-                if( is_pchar(path[i]) || path[i] == '/'){
-                        ou[n ++] = path[i];
-                }
-                else if(path[i] == '%'){
-                        if( (i + 2) > len){
-                                err = EILSEQ;
-                                break;
-                        }
-                        pct[0] = path[i ++];
-                        pct[1] = path[i ++];
-                        pct[2] = path[i ++];
-                        pct[3] = '\0';
-                        err = norm_pct(&pct);
-                        if( err ){
-                                break;
-                        }
-                        ou[n ++] = pct[0];
-                        ou[n ++] = pct[1];
-                        ou[n ++] = pct[2];
-                }
-                else {
-                        err = EILSEQ;
-                        break;
-                }
+        else {
+            err = EILSEQ;
+            break;
         }
-        ou[n] = '\0';
-        len = strlen(ou) + 1;
-        ou = realloc(ou, len);
-        free(*pathin);
-        *pathin = ou;
-        return err;
+    }
+    ou[n] = '\0';
+    len = strlen(ou) + 1;
+    ou = realloc(ou, len);
+    free(*pathin);
+    *pathin = ou;
+    return err;
 }
 
 /* 

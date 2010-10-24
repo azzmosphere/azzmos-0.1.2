@@ -21,11 +21,13 @@
 /* #####   HEADER FILE INCLUDES   ################################################### */
 #include <azzmos/uriresolve.h>
 /* #####   FUNCTION DEFINITIONS  -  LCOAL FUNCTIONS   ############################### */
-static void
-return_err(const char *key, const char *val, const char *msg, int err)
+static inline int
+return_err(uriobj_t **ref, uriobj_t **uri, int err)
 {
-	DEBUG_STR(key, val);
-	ERROR_E(msg, err);
+	uriobj_t *u = *(uri);
+    *(ref) = u;
+    u->uri_flags |= URI_INVALID;
+	return err;
 }
 
 /* #####   FUNCTION DEFINITIONS  -  EXPORTED FUNCTIONS   ############################ */
@@ -142,34 +144,32 @@ uri_resolve( uriobj_t **uri)
  *                be a memory allocation problem.
  * =====================================================================================
  */
-uriobj_t *
-ref_resolve(char *href, const uriobj_t *base, regexpr_t *re, const bool strict)
+extern int
+ref_resolve(uriobj_t **uri, const uriobj_t *base,const char *href, regexpr_t *re, const bool strict)
 {
+    int err = 0;
 	uriobj_t *trans,
 			 *ref = uri_alloc();
+    
 	if( !ref ){
-		ERROR("could not allocate memory for reference object");
-		return NULL;
-	}
-	int err = uri_parse(&ref,re,href);
+        return errno;
+    }
+	err  = uri_parse(&ref,re,href);
 	if(err){
-		ref->uri_flags |= URI_INVALID;
-		return_err("href",href,"could not parse href to uriobj", err);
-		return ref;
+		return return_err(&ref, uri, err);
 	}
 	if(ref->uri_path){
 		err = uri_norm_path(&ref->uri_path);
 		if( err ){
-			ref->uri_flags |= URI_INVALID;
-			return_err("path",ref->uri_path,"could not parse path", err);
-			return ref;
+            return return_err(&ref, uri, err);
 		}
 	}
 	trans = uri_trans_ref(ref,base,strict);
 	if( !trans){
-		ERROR("could not create target uri");
-		ref->uri_flags |= URI_INVALID;
-		return ref;
+        if(!err) {
+            err = EINVAL;
+        }
+		return return_err(&ref, uri, err);
 	}
 	err = uri_parse_auth(&trans);
 	if( !err){
@@ -192,18 +192,13 @@ ref_resolve(char *href, const uriobj_t *base, regexpr_t *re, const bool strict)
 		err = uri_norm_port(&trans->uri_port);
 	}
 	else {
-		ERROR_B("could not normalize uri",err);
-		ref->uri_flags |= URI_INVALID;
+		return return_err(&ref, uri, err);
 	}
 	if(!err){
 		err = uri_resolve(&trans);
 		if( err ){
-			if( err == EAI_SYSTEM){
-				ERROR("could not resolve uri");
-			}
-			else{
-				ERROR_B("could not resolve error", gai_strerror(err));
-			}
+            ref->uri_flags |= URI_DNSERR;
+			return return_err(&ref, uri, err);
 		}
 		else{
 			uri_free(ref);
@@ -211,5 +206,6 @@ ref_resolve(char *href, const uriobj_t *base, regexpr_t *re, const bool strict)
 			uri_clone(&ref,trans);
 		}
 	}
-	return ref;
+    *(uri) = ref;
+	return err;
 }
