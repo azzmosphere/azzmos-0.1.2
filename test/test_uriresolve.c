@@ -86,14 +86,18 @@ test_uri_resolve_3(CuTest *tc)
     uri_free(uri);
 }
 
-
+/*=====================================================================================
+ * Do use ref_alloc when using ref_resolve,  them memory allocation will be done by
+ * ref_resolve, so be allocating twice a memory leak can ocur.
+ * ====================================================================================
+ */
 void
 test_ref_resolve_1(CuTest *tc)
 {
 	char *href = strdup("http://www.example.com/"),
          *result;
 	uriobj_t *uri = uri_alloc(),
-             *ref = uri_alloc();
+             *ref;
     int err = 0;
     
     uri_parse(&uri,re,href);
@@ -103,6 +107,7 @@ test_ref_resolve_1(CuTest *tc)
     if( err == 0){
         result = strdup(ref->uri_path);
         printf("path = '%s'\n", result);
+        free(result);
     }
     else {
         /* 
@@ -110,66 +115,38 @@ test_ref_resolve_1(CuTest *tc)
          * as this is just a test don't bother. 
          *
          **/
-        printf("err = '%s'\n", strerror(err));
+        printf("errstr = '%s'\n", strerror(err));
     }
     uri_free(uri);
     uri_free(ref);
 	CuAssertIntEquals(tc,err,0);
 }
-/*
+
 void
 test_ref_resolve_2(CuTest *tc)
 {
 	char *href = strdup("http://www.example.com/some/dir/to/path"),
          *result;
 	uriobj_t *uri = uri_alloc(),
-             *ref = uri_alloc();
+             *ref;
+    int err = 0;
+    
 	uri_parse(&uri,re,href);
 	uri_parse_auth(&uri);
 	uri_resolve(&uri);
-	ref = ref_resolve("path/to/uri.html",uri,re,false);
-    result = strdup(ref->uri_path);
-    uri_free(ref);
+	err = ref_resolve(&ref, uri, "path/to/uri.html",re,false);
+    if( err == 0 ){
+        result = strdup(ref->uri_path);
+        printf("ref_resolve test 2 is successful\n");
+        printf("ref->uri_scheme = '%s'\n", ref->uri_scheme);
+        printf("ref->uri_auth   = '%s'\n", ref->uri_auth);
+        printf("ref->uri_path   = '%s'\n", ref->uri_path);
+        printf("ip address      = '%s'\n", ref->uri_ip->ip_addr);
+        uri_free(ref);
+    }
     uri_free(uri);
     CuAssertStrEquals(tc,"/some/dir/to/path/to/uri.html",result);
 }
-
-void
-test_ref_resolve_3(CuTest *tc)
-{
-	char *href = strdup("http://www.example.com/"),
-         *result = NULL;
-	uriobj_t *uri = uri_alloc(),
-             *ref = uri_alloc();
-	uri_parse(&uri,re,href);
-	uri_parse_auth(&uri);
-	uri_resolve(&uri);
-	ref = ref_resolve("path/to/uri.html",uri,re,false);
-    result = strdup(ref->uri_path);
-    uri_free(ref);
-    uri_free(uri);
-    CuAssertStrEquals(tc,"/path/to/uri.html",result);
-}
-
-void
-test_uri_trans_ref1(CuTest *tc)
-{
-	char *href = strdup("http://www.example.com/some/dir/to/path"),
-         *result;
-	uriobj_t *uri = uri_alloc(),
-	         *ref = uri_alloc(),
-			 *trans;
-	uri_parse(&uri,re,href);
-	uri_parse_auth(&uri);
-	uri_parse(&ref,re,"path/to/uri.html");
-	trans = uri_trans_ref(ref,uri,false);
-	uri_resolve(&uri);
-    result = strdup(trans->uri_path);
-    uri_free(uri);
-    uri_free(trans);
-    uri_free(ref);
-	CuAssertStrEquals(tc, result,"/some/dir/to/path/to/uri.html");
-}*/
 
 
 CuSuite *
@@ -180,9 +157,7 @@ GetSuite()
 	SUITE_ADD_TEST( suite, test_uri_resolve_2);
     SUITE_ADD_TEST( suite, test_uri_resolve_3);
     SUITE_ADD_TEST( suite, test_ref_resolve_1);
-	//SUITE_ADD_TEST( suite, test_ref_resolve_2);
-	//SUITE_ADD_TEST( suite, test_ref_resolve_3);
-	//SUITE_ADD_TEST( suite, test_uri_trans_ref1);
+	SUITE_ADD_TEST( suite, test_ref_resolve_2);
     return suite;
 }
 

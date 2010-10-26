@@ -105,21 +105,22 @@ uri_free( uriobj_t *uri)
  extern int       
  uri_clone(uriobj_t **uri, const uriobj_t *base)
  {
-	uriobj_t *u = uri_alloc();
-	if( !u ) {
-		return errno;
-	}
-	u->uri_flags = base->uri_flags;
-	u->uri_id    = base->uri_id;
-	u->uri_scheme= URI_CP_PT(base->uri_scheme);
-	u->uri_auth  = URI_CP_PT(base->uri_auth);
-	u->uri_path  = URI_CP_PT(base->uri_path);
-	u->uri_frag  = URI_CP_PT(base->uri_frag);
-	u->uri_host  = URI_CP_PT(base->uri_host);
-	u->uri_port  = URI_CP_PT(base->uri_port);
-	u->uri_query = URI_CP_PT(base->uri_query);
-	*uri = u;
-	return errno;
+     int err = 0;
+     uriobj_t *u = uri_alloc();
+     if( !u ) {
+         return errno;
+     }
+     u->uri_flags = base->uri_flags;
+     u->uri_id    = base->uri_id;
+     u->uri_scheme= URI_CP_PT(base->uri_scheme);
+     u->uri_auth  = URI_CP_PT(base->uri_auth);
+     u->uri_path  = URI_CP_PT(base->uri_path);
+     u->uri_frag  = URI_CP_PT(base->uri_frag);
+     u->uri_host  = URI_CP_PT(base->uri_host);
+     u->uri_port  = URI_CP_PT(base->uri_port);
+     u->uri_query = URI_CP_PT(base->uri_query);
+     *(uri) = u;
+     return err;
  }
 
 /* 

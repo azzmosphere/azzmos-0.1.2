@@ -429,54 +429,54 @@ uri_comp_recomp( const uriobj_t *uri)
 extern uriobj_t *
 uri_trans_ref(const uriobj_t *refin, const uriobj_t *base, const bool strict)
 {
-        uriobj_t *trans = uri_alloc(),
-		         *ref = NULL;
-		int e = uri_clone(&ref, refin);
-        if( e ) {
-                return NULL;
-        }
-        if( ! strict && (strcmp(UI(base->uri_scheme), UI(ref->uri_scheme)) == 0)){
-                ref->uri_scheme = NULL;
-        }
-        if( ref->uri_scheme){
+    uriobj_t *trans = uri_alloc(),
+             *ref = NULL;
+    int e = uri_clone(&ref, refin);
+    if( e ) {
+        return NULL;
+    }
+    if(!strict && (strcmp(UI(base->uri_scheme), UI(ref->uri_scheme)) == 0)){
+        ref->uri_scheme = NULL;
+    }
+    if( ref->uri_scheme){
                 trans->uri_scheme = URI_CP_PT(ref->uri_scheme);
                 trans->uri_auth   = URI_CP_PT(ref->uri_auth);
                 trans->uri_path   = uri_remove_dot_segments( ref->uri_path );
                 trans->uri_query  = URI_CP_PT(ref->uri_query);
+    }
+    else {
+        if( ref->uri_auth ){
+            trans->uri_auth = URI_CP_PT(ref->uri_auth);
+            trans->uri_path = uri_remove_dot_segments( ref->uri_path );
+            trans->uri_query = URI_CP_PT(ref->uri_query);
         }
-        else {
-                if( ref->uri_auth ){
-                        trans->uri_auth = URI_CP_PT(ref->uri_auth);
-                        trans->uri_path = uri_remove_dot_segments( ref->uri_path );
-                        trans->uri_query = URI_CP_PT(ref->uri_query);
+        else{
+            if( ! ref->uri_path ){
+                trans->uri_path   = URI_CP_PT(base->uri_path);
+                if( ref->uri_query){
+                    trans->uri_query = URI_CP_PT(ref->uri_query);
+                }
+                else {
+                    trans->uri_query = URI_CP_PT(base->uri_query);
+                }
+            }
+            else {
+                if( ref->uri_path[0] == '/'){
+                    trans->uri_path = uri_remove_dot_segments(ref->uri_path);
                 }
                 else{
-                        if( ! ref->uri_path ){
-                                trans->uri_path   = URI_CP_PT(base->uri_path);
-                                if( ref->uri_query){
-									trans->uri_query = URI_CP_PT(ref->uri_query);
-                                }
-                                else {
-									trans->uri_query = URI_CP_PT(base->uri_query);
-                                }
-                        }
-                        else {
-                                if( ref->uri_path[0] == '/'){
-									trans->uri_path = uri_remove_dot_segments(ref->uri_path);
-                                }
-                                else{
-									trans->uri_path = uri_merge_paths(ref, base);
-									trans->uri_path = strcpy(trans->uri_path,uri_remove_dot_segments(trans->uri_path));
-                                }
-                                trans->uri_query = URI_CP_PT(ref->uri_query);
-                        }
-                        uri_strcpy(&trans->uri_auth, base->uri_auth);
+                    trans->uri_path = uri_merge_paths(ref, base);
+                    trans->uri_path = strcpy(trans->uri_path,uri_remove_dot_segments(trans->uri_path));
                 }
-                uri_strcpy(&trans->uri_scheme, base->uri_scheme);
+                trans->uri_query = URI_CP_PT(ref->uri_query);
+            }
+            uri_strcpy(&trans->uri_auth, base->uri_auth);
         }
-        trans->uri_frag = URI_CP_PT(ref->uri_frag);
-		uri_free(ref);
-        return trans;
+        uri_strcpy(&trans->uri_scheme, base->uri_scheme);
+    }
+    trans->uri_frag = URI_CP_PT(ref->uri_frag);
+    uri_free(ref);  
+    return trans;
 }
 
 /* 

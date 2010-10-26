@@ -28,6 +28,9 @@
 #ifndef _AZZMOS_REGEXPR_H_
 #include <azzmos/regexpr.h>
 #endif
+#ifndef __AZZMOS_URIPARSE_H__
+#include <azzmos/uriparse.h>
+#endif
 
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
 /**************************************************************************************

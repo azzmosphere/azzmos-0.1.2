@@ -171,7 +171,7 @@ ref_resolve(uriobj_t **uri, const uriobj_t *base,const char *href, regexpr_t *re
         }
 		return return_err(&ref, uri, err);
 	}
-	err = uri_parse_auth(&trans);
+    err = uri_parse_auth(&trans);
 	if( !err){
 		err = uri_norm_scheme(&trans->uri_scheme);
 	}
@@ -202,8 +202,7 @@ ref_resolve(uriobj_t **uri, const uriobj_t *base,const char *href, regexpr_t *re
 		}
 		else{
 			uri_free(ref);
-			ref = uri_alloc();
-			uri_clone(&ref,trans);
+            ref = trans;
 		}
 	}
     *(uri) = ref;
