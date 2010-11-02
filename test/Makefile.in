@@ -33,10 +33,10 @@ build_triplet = @build@
 host_triplet = @host@
 check_PROGRAMS = test_uriobj$(EXEEXT) test_uriparse$(EXEEXT) \
 	test_urinorm$(EXEEXT) test_uriresolve$(EXEEXT) \
-	test_urilist$(EXEEXT)
+	test_urilist$(EXEEXT) test_httpheaders$(EXEEXT)
 TESTS = test_uriobj$(EXEEXT) test_uriparse$(EXEEXT) \
 	test_urinorm$(EXEEXT) test_uriresolve$(EXEEXT) \
-	test_urilist$(EXEEXT)
+	test_urilist$(EXEEXT) test_httpheaders$(EXEEXT)
 subdir = test
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -53,6 +53,10 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 am__objects_1 = CuTest.$(OBJEXT)
+am_test_httpheaders_OBJECTS = test_httpheaders.$(OBJEXT) \
+	$(am__objects_1)
+test_httpheaders_OBJECTS = $(am_test_httpheaders_OBJECTS)
+test_httpheaders_LDADD = $(LDADD)
 am_test_urilist_OBJECTS = test_urilist.$(OBJEXT) $(am__objects_1)
 test_urilist_OBJECTS = $(am_test_urilist_OBJECTS)
 test_urilist_LDADD = $(LDADD)
@@ -81,9 +85,9 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-DIST_SOURCES = $(test_urilist_SOURCES) $(test_urinorm_SOURCES) \
-	$(test_uriobj_SOURCES) $(test_uriparse_SOURCES) \
-	$(test_uriresolve_SOURCES)
+DIST_SOURCES = $(test_httpheaders_SOURCES) $(test_urilist_SOURCES) \
+	$(test_urinorm_SOURCES) $(test_uriobj_SOURCES) \
+	$(test_uriparse_SOURCES) $(test_uriresolve_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -204,9 +208,16 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
+
+#
+# test data is sent to the compiler as __TEST_DATA__, this MACRO 
+# can be (should be) used to contain all static files that are 
+# required for testing.
+# 
+#
 SOURCES = CuTest.c CuTest.h
 INCLUDES = @POSTGRESQL_CFLAGS@ -I$(top_srcdir)/include
-AM_CFLAGS = -I$(top_srcdir)/src
+AM_CFLAGS = -I$(top_srcdir)/src -D__TEST_DATA__=\"$(top_srcdir)/data\"
 AM_LDFLAGS = @POSTGRESQL_LDFLAGS@ \
              @LIBCURL@  \
              -L$(top_builddir)/lib -lazzmos
@@ -216,6 +227,7 @@ test_uriparse_SOURCES = test_uriparse.c $(SOURCES)
 test_urinorm_SOURCES = test_urinorm.c $(SOURCES)
 test_uriresolve_SOURCES = test_uriresolve.c $(SOURCES)
 test_urilist_SOURCES = test_urilist.c $(SOURCES)
+test_httpheaders_SOURCES = test_httpheaders.c $(SOURCES)
 all: all-am
 
 .SUFFIXES:
@@ -256,6 +268,9 @@ clean-checkPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+test_httpheaders$(EXEEXT): $(test_httpheaders_OBJECTS) $(test_httpheaders_DEPENDENCIES) 
+	@rm -f test_httpheaders$(EXEEXT)
+	$(LINK) $(test_httpheaders_OBJECTS) $(test_httpheaders_LDADD) $(LIBS)
 test_urilist$(EXEEXT): $(test_urilist_OBJECTS) $(test_urilist_DEPENDENCIES) 
 	@rm -f test_urilist$(EXEEXT)
 	$(LINK) $(test_urilist_OBJECTS) $(test_urilist_LDADD) $(LIBS)
@@ -279,6 +294,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/CuTest.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_httpheaders.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_urilist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_urinorm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/test_uriobj.Po@am__quote@
