@@ -26,9 +26,10 @@
 /* #####   EXPORTED FUNCTION DECLARATIONS   ######################################### */
 extern char * usplice( const char *in, unsigned int start, unsigned int end);
 extern char * _macitoa_( int num );
-extern void _syslog_print_error( unsigned int tid, char *fname, int lineno, char *m1, char *m2, int pri );
-extern void safe_free(void *ptr);
-extern void  reset_file ( FILE *fh );
+extern void   _syslog_print_error( unsigned int tid, char *fname, int lineno, char *m1, char *m2, int pri );
+extern void   safe_free(void *ptr);
+extern void   reset_file ( FILE *fh );
+extern char * rm_ws(const char *s1);
 
 
 /* #####   EXPORTED MACROS   ######################################################## */
@@ -53,6 +54,8 @@ extern void  reset_file ( FILE *fh );
 /**************************************************************************************
  * The following functions are stop the program from breaking by trying to malloc NULL
  **************************************************************************************/
-#define URI_CP_PT(p) (p)?strdup(p):NULL
-#define UI(u) ((u)?u:"")
+#define __URI_CP_PT(p,f) (p)?f(p):NULL
+#define URI_CP_PT(p)     __URI_CP_PT(p,strdup)
+#define URI_CP_PTWS(p)   __URI_CP_PT(p,rm_ws)
+#define UI(u)            ((u)?u:"")
 

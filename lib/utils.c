@@ -29,28 +29,28 @@
 extern char *
 usplice( const char *in, unsigned int start, unsigned int end)
 {
-	char *out;
-	int   l, i = 0;
+    char *out;
+    int   l, i = 0;
 
-	if(!end){
-		end = strlen(in);
-	}
-	if( (l = end - start) < 0 ){
-		return NULL;
-	}
-	if( end > strlen(in)){
-		return NULL;
-	}
-	if( (out = (char *) malloc((l + 1))) == NULL ){
-		return NULL;
-	}	
-	for( l = start; l < (end + 1); l ++ ){
-		out[i++] = in[l];
-	}
-	if( out[i] != '\0'){
-		out[i] = '\0';
-	}
-	return out;
+    if(!end){
+        end = strlen(in);
+    }
+    if( (l = end - start) < 0 ){
+        return NULL;
+    }
+    if( end > strlen(in)){
+        return NULL;
+    }
+    if( (out = (char *) malloc((l + 1))) == NULL ){
+        return NULL;
+    }	
+    for( l = start; l < (end + 1); l ++ ){
+        out[i++] = in[l];
+    }
+    if( out[i] != '\0'){
+        out[i] = '\0';
+    }
+    return out;
 }
 
 /* 
@@ -63,14 +63,12 @@ usplice( const char *in, unsigned int start, unsigned int end)
 extern char *
 _macitoa_( int num )
 {
-	char *text;
-	int result = asprintf( &text, "%d", num );
-	if( result < 0 )
-	{
-		syslog( LOG_ERR, "error converting number to string");
-		return NULL;
-	}
-	return text;
+    char *text;
+    int result = asprintf( &text, "%d", num );
+    if( result < 0 ){
+        return NULL;
+    }
+    return text;
 }
 
 /* 
@@ -113,5 +111,43 @@ safe_free(void *ptr)
         free(ptr);
         ptr = NULL;
     }
+}
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  rm_ws
+ *  Description:  Remove white space,  return string that has white space removed.
+ * =====================================================================================
+ */
+extern char *
+rm_ws(const char *s1)
+{
+    char *out;
+    int   len, i, offsets, offsete;
+    
+    if(!s1){
+        return NULL;
+    }
+    len = strlen(s1);
+    for(i = 0;i< len; i++){
+        if(! isspace(s1[i])){
+            offsets = i;
+            break;
+        }
+    }
+    len --;
+    for(i = len;i > 0;i--){
+        if(! isspace(s1[i])){
+            offsete = i;
+            break;
+        }
+    }
+    if(offsets < offsete){
+        out = usplice(s1,offsets,offsete);
+    }
+    else {
+        out = strdup(s1);
+    }
+    return out;
 }
 

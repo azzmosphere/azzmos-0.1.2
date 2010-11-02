@@ -70,6 +70,24 @@ void
 test_httpheader_get_val_1(CuTest *tc)
 {
     char *value = httpheader_get_val(hd,"Date");
+    CuAssertStrEquals(tc,value,"Sat, 05 Jun 2010 13:36:39 GMT");
+    safe_free(value);
+}
+
+void 
+test_httpheader_get_val_2(CuTest *tc)
+{
+    char *value = httpheader_get_val(hd,"Server");
+    CuAssertStrEquals(tc,value,"Apache/1.3.29");
+    safe_free(value);
+}
+
+void 
+test_httpheader_get_val_3(CuTest *tc)
+{
+    char *value = httpheader_get_val(hd,"ETag");
+    CuAssertStrEquals(tc,value,"\"da4e3e-f77c-4c0a52c5\"");
+    safe_free(value);
 }
 
 void 
@@ -85,8 +103,10 @@ GetSuite()
 	SUITE_ADD_TEST( suite, test_httpheaders_alloc_1);
     SUITE_ADD_TEST( suite, test_httpheaders_init_1);
     SUITE_ADD_TEST( suite, test_httpheaders_build_1);
-    //SUITE_ADD_TEST( suite, test_httpheader_get_val_1);
-	//SUITE_ADD_TEST( suite, test_httpheaders_free_1);    
+    SUITE_ADD_TEST( suite, test_httpheader_get_val_1);
+    SUITE_ADD_TEST( suite, test_httpheader_get_val_2);
+    SUITE_ADD_TEST( suite, test_httpheader_get_val_3);
+	SUITE_ADD_TEST( suite, test_httpheaders_free_1);    
     return suite;
 }
 
