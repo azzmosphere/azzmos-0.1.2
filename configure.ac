@@ -21,10 +21,11 @@ AC_CONFIG_FILES([
   test/Makefile
 ])
 
+# configure the m4 directories
+AC_CONFIG_MACRO_DIR([m4])
+
 
 dnl library checks
-dnl AC_SEARCH_LIBS( pthread_mutex_lock, pthread, , AC_MSG_ERROR( [ libpthread is a required library] ), )
-dnl AC_SEARCH_LIBS( strlen, c, , AC_MSG_ERROR( [strlen is a required function] ), )
 LIBCURL_CHECK_CONFIG( , [ 7.10.03 ], , AC_MSG_ERROR( [ libCurl version 7.10.03 or above is required ] ))
 AX_PATH_LIB_PCRE([], [AC_MSG_ERROR([pcre required to build])])
 

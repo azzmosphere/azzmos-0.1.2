@@ -98,3 +98,12 @@
 #ifndef __AZZMOS_URIRESOLVE_H__
 #include <azzmos/uriresolve.h>
 #endif
+
+/**************************************************************************************
+ * htmlpage is a glue object that also contains content for a HTML page 
+ **************************************************************************************
+ */
+#ifndef _AZZMOS_HTMLPAGE_H_
+#include <azzmos/htmlpage.h>
+#endif
+

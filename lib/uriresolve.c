@@ -89,32 +89,32 @@ create_ip_list(uri_ip_t **ipin, const struct addrinfo *addr)
 extern int 
 uri_resolve( uriobj_t **uri)
 {
-	int gai_error = 0;
-	struct addrinfo hints,
-	               *addr,
-                   *addrfirst;
-	uriobj_t *trans = *(uri);
+    int gai_error = 0;
+    struct addrinfo hints,
+        *addr,
+        *addrfirst;
+    uriobj_t *trans = *(uri);
     uri_ip_t *ip;
 	
-	/* zero fill structure */
-	bzero(&hints, sizeof(hints));
+    /* zero fill structure */
+    bzero(&hints, sizeof(hints));
     bzero(&addr, sizeof(addr));
 	
-	/* For this application assume TCP sockets */
-	hints.ai_protocol = IPPROTO_TCP;
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_family   = URI_AI_FAMILY;
+    /* For this application assume TCP sockets */
+    hints.ai_protocol = IPPROTO_TCP;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_family   = URI_AI_FAMILY;
 	
-	/* calculate what needs to be returned */
-	if( trans->uri_flags & URI_IP){
-		hints.ai_flags =  AI_NUMERICHOST;
-	}
-	/* Make DNS call */
+    /* calculate what needs to be returned */
+    if( trans->uri_flags & URI_IP){
+        hints.ai_flags =  AI_NUMERICHOST;
+    }
+    /* Make DNS call */
 	hints.ai_flags |= AI_CANONNAME|AI_PASSIVE;
 	gai_error = getaddrinfo(trans->uri_host, trans->uri_scheme, &hints, &addr);
 	
 	/* all things going well copy the address structure to uri */
-	if( ! gai_error ){
+    if( ! gai_error ){
         gai_error = create_ip_list(&trans->uri_ip, addr);
         
         /* free up memory and copy the newly created reference to uri */
@@ -122,8 +122,8 @@ uri_resolve( uriobj_t **uri)
             freeaddrinfo(addr);
             addr = NULL;
         }
-	}
-	return gai_error;
+    }
+    return gai_error;
 }
 
 /* 
@@ -148,63 +148,63 @@ extern int
 ref_resolve(uriobj_t **uri, const uriobj_t *base,const char *href, regexpr_t *re, const bool strict)
 {
     int err = 0;
-	uriobj_t *trans,
-			 *ref = uri_alloc();
+    uriobj_t *trans,
+        *ref = uri_alloc();
     
-	if( !ref ){
+    if( !ref ){
         return errno;
     }
-	err  = uri_parse(&ref,re,href);
-	if(err){
-		return return_err(&ref, uri, err);
-	}
-	if(ref->uri_path){
-		err = uri_norm_path(&ref->uri_path);
-		if( err ){
+    err  = uri_parse(&ref,re,href);
+    if(err){
+        return return_err(&ref, uri, err);
+    }
+    if(ref->uri_path){
+        err = uri_norm_path(&ref->uri_path);
+        if( err ){
             return return_err(&ref, uri, err);
-		}
-	}
-	trans = uri_trans_ref(ref,base,strict);
-	if( !trans){
+        }
+    }
+    trans = uri_trans_ref(ref,base,strict);
+    if( !trans){
         if(!err) {
             err = EINVAL;
         }
-		return return_err(&ref, uri, err);
-	}
+        return return_err(&ref, uri, err);
+    }
     err = uri_parse_auth(&trans);
-	if( !err){
-		err = uri_norm_scheme(&trans->uri_scheme);
-	}
-	if( !err){
-		if( trans->uri_flags & URI_IP){
-			if(trans->uri_flags & URI_IPV6){
-				err = uri_norm_ipv6(&trans->uri_host);
-			}
-			else {
-				err = uri_norm_ipv4(&trans->uri_host);
-			}
-		}
-		else if(trans->uri_flags & URI_REGNAME){
-			err = uri_norm_reg_name(&trans->uri_host);
-		}
-	}
-	if( !err){
-		err = uri_norm_port(&trans->uri_port);
-	}
-	else {
-		return return_err(&ref, uri, err);
-	}
-	if(!err){
-		err = uri_resolve(&trans);
-		if( err ){
+    if( !err){
+        err = uri_norm_scheme(&trans->uri_scheme);
+    }
+    if( !err){
+        if( trans->uri_flags & URI_IP){
+            if(trans->uri_flags & URI_IPV6){
+                err = uri_norm_ipv6(&trans->uri_host);
+            }
+            else {
+                err = uri_norm_ipv4(&trans->uri_host);
+            }
+        }
+        else if(trans->uri_flags & URI_REGNAME){
+            err = uri_norm_reg_name(&trans->uri_host);
+        }
+    }
+    if( !err){
+        err = uri_norm_port(&trans->uri_port);
+    }
+    else {
+        return return_err(&ref, uri, err);
+    }
+    if(!err){
+        err = uri_resolve(&trans);
+        if( err ){
             ref->uri_flags |= URI_DNSERR;
-			return return_err(&ref, uri, err);
-		}
-		else{
-			uri_free(ref);
+            return return_err(&ref, uri, err);
+        }
+        else{
+            uri_free(ref);
             ref = trans;
-		}
-	}
+        }
+    }
     *(uri) = ref;
-	return err;
+    return err;
 }

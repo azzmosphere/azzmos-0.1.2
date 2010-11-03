@@ -7,5 +7,6 @@ pkginclude_HEADERS = common.h \
 		  urinorm.h \
                   httpheaders.h \
 		  db.h \
-		  uriresolve.h
+		  uriresolve.h \
+		  htmlpage.h
 pkgincludedir= $(includedir)/azzmos

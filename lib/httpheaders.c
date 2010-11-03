@@ -115,9 +115,7 @@ httpheaders_build(httpheaders_t **hd, FILE *ifile)
     bool  first = true;
     httpheaders_t *h = *(hd);
     
-    /*
-     * get past the HTTP response code.
-     **/
+    /* get past the HTTP response code. */
     line = fgets(line,BUFSIZ,ifile);
     if(strncasecmp(line,"http",4) == 0){
         line = fgets(line,BUFSIZ,ifile);
@@ -143,7 +141,9 @@ httpheaders_build(httpheaders_t **hd, FILE *ifile)
         line = NULL;
         line = malloc(BUFSIZ);
         line = fgets(line,BUFSIZ,ifile);
-        if(isspace(line[0])){
+        
+        /* add follow on lines to value */
+        while(line && isspace(line[0])){
             len = (strlen(line) + 1 + strlen(val));
             val = realloc(val,len);
             val = strncat(val,strdup(line),(len -1));

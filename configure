@@ -10932,6 +10932,9 @@ CC="$lt_save_CC"
 ac_config_files="$ac_config_files Makefile include/Makefile include/azzmos/Makefile lib/Makefile src/Makefile test/Makefile"
 
 
+# configure the m4 directories
+
+
 
 
 
