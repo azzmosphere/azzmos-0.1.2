@@ -133,3 +133,51 @@ html_set_url(htmlpage_t **page, uriobj_t **url)
     p->p_url = *(url);
     return error;
 }
+
+/*
+ * =====================================================================================
+ * html_set_text()
+ *
+ * set page text from a file stream.
+ * =====================================================================================
+ */
+extern int          
+html_set_text(htmlpage_t **page, FILE *stream)
+{
+    int    result = 0, len = 0;
+    size_t size   = sizeof(char),
+           nitems = (BUFSIZ  -1),
+           rv; 
+    char  *ptr  = malloc((nitems + 1)),
+          *text = NULL;
+    htmlpage_t *p;
+    
+    if(!ptr){
+        return errno;
+    }
+    do{
+        rv = fread(ptr,size,nitems,stream);
+        if(rv != nitems && !feof(stream)){
+            result = ferror(stream);
+            break;
+        }
+        ptr[nitems] = '\0';
+        if(text && ptr){
+            len = strlen(text) + strlen(ptr);
+            text = realloc(text,len);
+            strcat(text,ptr);
+        }
+        else{
+            text = URI_CP_PT(ptr);
+        }
+        safe_free(ptr);
+        ptr = malloc((nitems + 1));
+    }while(rv == nitems);
+    safe_free(ptr);
+    if(text){
+        p = *(page);
+        p->p_text = strdup(text);
+        safe_free(text);
+    }
+    return result;
+}

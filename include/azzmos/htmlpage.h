@@ -47,3 +47,4 @@ extern htmlpage_t * htmlpage_alloc();
 extern void         htmlpage_free(htmlpage_t *page);
 extern void         htmlpage_free_nu(htmlpage_t *page);
 extern int          html_set_hdr(htmlpage_t **page, FILE *stream);
+extern int          html_set_text(htmlpage_t **page, FILE *stream);
